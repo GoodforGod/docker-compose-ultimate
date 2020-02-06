@@ -133,11 +133,22 @@ services:
 
 # pgadmin4:
 #   image: 'dpage/pgadmin4:latest'
+#   ports:
+#     - '8010:80'
 #   environment:
 #     - PGADMIN_DEFAULT_EMAIL=bob@gmail.com
 #     - PGADMIN_DEFAULT_PASSWORD=postgres
+
+##################################         INFINISPAN
+# INFO - https://github.com/infinispan/infinispan-images
+
+# infinispan:
+#   image: infinispan/server
 #   ports:
-#     - '8010:80'
+#     - '11222:11222'
+#   environment:
+#     - USER=test
+#     - PASS=test
 
 ##################################         REDIS
 
@@ -152,18 +163,18 @@ services:
 #   hostname: redis-commander
 #   image: rediscommander/redis-commander:latest
 #   restart: always
-#   environment:
-#     - REDIS_HOSTS=local:redis:6379:0:test
 #   ports:
 #     - "9200:8081"
+#   environment:
+#     - REDIS_HOSTS=local:redis:6379:0:test
 
 ################################           MONGO
 
 # mongo:
 #   image: 'mongo:latest'
-#   environment: []
 #   ports:
 #     - '27017:27017'
+#   environment: []
 
 # SONARQUBE
 
@@ -176,6 +187,8 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:latest
+    logging:
+      driver: none
     ports:
       - "6831:6831/udp"
       - "16686:16686"
@@ -186,10 +199,10 @@ services:
 #   image: 'dius/pact-broker:latest'
 #   links:
 #     - db
-#   ports:
-#     - '10001:80'
 #   depends_on:
 #     - db
+#   ports:
+#     - '10001:80'
 #   environment:
 #     PACT_BROKER_BASIC_AUTH_USERNAME: 'devsun'
 #     PACT_BROKER_BASIC_AUTH_PASSWORD: '2bnF20Aj'
