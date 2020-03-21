@@ -66,6 +66,8 @@ services:
 #     KAFKA_REST_PROXY_URL: 'kafka-rest:8083'
 #     PROXY: 'true'
 
+
+###########################################       KSQL
 # ksql-server:
 #   image: "confluentinc/cp-ksql-server:latest"
 #   depends_on:
@@ -127,7 +129,7 @@ services:
 #   ports:
 #     - '5432:5432'
 #   environment:
-#     POSTGRES_DB: orgstaff
+#     POSTGRES_DB: postgres
 #     POSTGRES_USER: postgres
 #     POSTGRES_PASSWORD: postgres
 
@@ -176,7 +178,7 @@ services:
 #     - '27017:27017'
 #   environment: []
 
-# SONARQUBE
+################################          SONARQUBE
 
 # sonarqube:
 #   image: sonarqube
@@ -198,9 +200,9 @@ services:
 # pact-broker:
 #   image: 'dius/pact-broker:latest'
 #   links:
-#     - db
+#     - postgres
 #   depends_on:
-#     - db
+#     - postgres
 #   ports:
 #     - '10001:80'
 #   environment:
@@ -209,7 +211,7 @@ services:
 #     PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME: 'true'
 #     PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD: 'true'
 #     PACT_BROKER_DATABASE_HOST: db
-#     PACT_BROKER_DATABASE_NAME: orgstaff
+#     PACT_BROKER_DATABASE_NAME: postgres
 #     PACT_BROKER_DATABASE_USERNAME: postgres
 #     PACT_BROKER_DATABASE_PASSWORD: postgres
 #     check_for_potential_duplicate_pacticipant_names: 'false'
