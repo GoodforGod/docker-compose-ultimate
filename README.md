@@ -16,7 +16,7 @@ All services have specified dependencies and configured to use each other.
     - [Document Oriented:](#Document Oriented)
         - [MongoDB](#MongoDB)
         - [ArangoDB](#ArangoDB)
-    - [Key-Value:](#Key-Value)
+    - [Key Value:](#Key Value)
         - [Redis](#Redis)
             - [CLI](#Redis CLI)
         - [Infinispan](#Infinispan)
@@ -33,7 +33,8 @@ All services have specified dependencies and configured to use each other.
     - [Search Engines:](#Search Engines)
         - [ElasticSearch](#ElasticSearch)
         - [ArangoDB](#ArangoDB Search)
-    
+
+
 - [Kafka infrastructure:](#Kafka infrastructure)
     - [Kafka](#Kafka)
     - [Zookeeper](#Zookeeper)
@@ -42,10 +43,12 @@ All services have specified dependencies and configured to use each other.
     - [KSQL:](#KSQL)
         - [Client](#KSQL Client)
         - [Control Center](#KSQL Control Center)
-        
+
+
 - [Big Data:](#Big Data)
     - [Apache Nifi](#Apache Nifi)
-    
+
+
 - [Infrastructure:](#Infrastructure)
     - [Jaeger](#Jaeger)
     - [PACT Broker](#PACT Broker)
@@ -177,7 +180,7 @@ services:
       - ARANGO_NO_AUTH=1
 ```
 
-### Key-Value (Cache)
+### Key Value
 
 The key-value part refers to the fact that the database stores data as a collection of key/value pairs. 
 This is a simple method of storing data, and it is known to scale well.
