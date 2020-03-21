@@ -98,7 +98,7 @@ services:
 
 
   ksql-cli:
-    image: confluentinc/cp-ksql-cli:5.3.0
+    image: confluentinc/cp-ksql-cli
     logging:
       driver: none
     depends_on:
@@ -109,7 +109,7 @@ services:
 
 
   control-center:
-    image: confluentinc/cp-enterprise-control-center:5.3.0
+    image: confluentinc/cp-enterprise-control-center
     logging:
       driver: none
     ports:
@@ -385,7 +385,7 @@ services:
 
   #############################             LiquiBase
   liquibase:
-    image: postgres
+    image: kilna/liquibase-postgres
     logging:
       driver: none
     ports:
@@ -393,9 +393,11 @@ services:
     depends_on:
       - postgres
     environment:
-      postgres_db: postgres
-      postgres_user: postgres
-      postgres_password: postgres
+      LIQUIBASE_HOST: postgres
+      LIQUIBASE_PORT: 5432
+      LIQUIBASE_DATABASE: postgres
+      LIQUIBASE_USERNAME: postgres
+      LIQUIBASE_PASSWORD: postgres
 
 
   #############################             APACHE ATLAS
@@ -429,9 +431,9 @@ services:
     image: janusgraph/janusgraph
     logging:
       driver: none
-#    volumes:
-#      - ./janusgraph:/opt/janusgraph/conf
-#      - ./janusgraph:/etc/opt/janusgraph
+    #    volumes:
+    #      - ./janusgraph:/opt/janusgraph/conf
+    #      - ./janusgraph:/etc/opt/janusgraph
     ports:
       - '8182:8182'
     depends_on:

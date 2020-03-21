@@ -2,8 +2,10 @@
 
 Docker Compose for all services that I was working with or configured while developing.
 
-Just in case I need to ready-n-run them all so I can do it from one place.
+Just in case I need to *ready-to-run* them all so I can do it from one place as *Docker-Compose*.
 Or as a builder with configured docker compose dependencies.
+
+All services have specified dependencies and configured to use each other.
 
 - [Databases:](#Databases)
     - [RDBMS:](#RDBMS)
@@ -36,7 +38,7 @@ Or as a builder with configured docker compose dependencies.
     - [Kafka](#Kafka)
     - [Zookeeper](#Zookeeper)
     - [Kafka Topics](#Kafka Topics)
-    - [Kafka Rest](#Kafka Rest)
+    - [Kafka REST](#Kafka REST)
     - [KSQL:](#KSQL)
         - [Client](#KSQL Client)
         - [Control Center](#KSQL Control Center)
@@ -61,6 +63,9 @@ RDBMS stands for Relational Database Management System.
 RDBMS is the basis for SQL, and for all modern database systems like Postgres, Oracle, MySQL and etc.
 
 #### Postgres
+
+For more info - [check here](https://hub.docker.com/_/postgres/).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -77,6 +82,9 @@ services:
 ```
 
 ##### Postgres Admin
+
+For more info - [check here](https://hub.docker.com/r/dpage/pgadmin4).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -92,6 +100,9 @@ services:
 ```
 
 #### Oracle
+
+For more info - [check here](https://hub.docker.com/_/oracle-database-enterprise-edition).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -105,6 +116,9 @@ services:
 ```
 
 #### Cockroach
+
+For more info - [check here](https://hub.docker.com/r/cockroachdb/cockroach).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -119,21 +133,13 @@ services:
 ```
 
 ### Document Oriented
-```dockerfile
-version: '2.3'
-services:
-  pgadmin4:
-    image: dpage/pgadmin4
-#    logging:
-#      driver: none
-    ports:
-      - '8010:80'
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=bob@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=postgres
-```
+
+
 
 #### MongoDB
+
+For more info - [check here](https://hub.docker.com/_/mongo).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -150,6 +156,9 @@ services:
 ```
 
 #### ArangoDB
+
+For more info - [check here](https://hub.docker.com/_/arangodb).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -166,6 +175,9 @@ services:
 ### Key-Value (Cache)
 
 #### Redis
+
+For more info - [check here](https://hub.docker.com/_/redis).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -179,6 +191,9 @@ services:
 ```
 
 ##### Redis CLI
+
+For more info - [check here](https://hub.docker.com/r/rediscommander/redis-commander).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -193,6 +208,9 @@ services:
 ```
 
 #### Infinispan
+
+For more info - [check here](https://hub.docker.com/r/infinispan/server).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -208,6 +226,9 @@ services:
 ```
 
 #### Hazelcast
+
+For more info - [check here](https://hub.docker.com/r/hazelcast/hazelcast).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -224,6 +245,9 @@ services:
 ### Column Oriented DBMS
 
 #### Cassandra
+
+For more info - [check here](https://hub.docker.com/_/cassandra).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -242,6 +266,9 @@ services:
 ```
 
 #### ClickHouse
+
+For more info - [check here](https://hub.docker.com/r/yandex/clickhouse-server).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -258,6 +285,9 @@ services:
 ```
 
 ##### ClickHouse CLI
+
+For more info - [check here](https://hub.docker.com/r/yandex/clickhouse-client).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -271,6 +301,9 @@ services:
 ```
 
 ##### ClickHouse JDBC Bridge
+
+For more info - [check here](https://hub.docker.com/r/riftbit/clickhouse-jdbc-bridge-service) and [here](https://github.com/ClickHouse/clickhouse-jdbc-bridge).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -287,6 +320,9 @@ services:
 ```
 
 ##### Redash
+
+For more info - [check here](https://hub.docker.com/r/redash/redash) and [here](https://github.com/getredash/redash/blob/master/docker-compose.yml).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -363,6 +399,9 @@ services:
 ### Graph Databases
 
 #### JanusGraph
+
+For more info - [check here](https://hub.docker.com/r/janusgraph/janusgraph).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -390,6 +429,9 @@ services:
 ### Search Engines
 
 #### ElasticSearch
+
+For more info - [check here](https://hub.docker.com/_/elasticsearch).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -411,6 +453,9 @@ services:
 ## Kafka infrastructure
 
 ### Kafka
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-kafka).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -434,6 +479,9 @@ services:
 ```
 
 ### Zookeeper
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-zookeeper).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -447,6 +495,9 @@ services:
 ```
 
 ### Kafka Topics
+
+For more info - [check here](https://hub.docker.com/r/landoop/kafka-topics-ui).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -466,7 +517,10 @@ services:
       PROXY: 'true'
 ```
 
-### Kafka Rest
+### Kafka REST
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-kafka-rest).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -489,6 +543,9 @@ services:
 
 
 ### KSQL
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-ksql-server).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -511,11 +568,14 @@ services:
 ```
 
 #### KSQL Client
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-ksql-cli).
+
 ```dockerfile
 version: '2.3'
 services:
   ksql-cli:
-    image: confluentinc/cp-ksql-cli:5.3.0
+    image: confluentinc/cp-ksql-cli
 #    logging:
 #      driver: none
     depends_on:
@@ -526,11 +586,14 @@ services:
 ```
 
 #### KSQL Control Center
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-enterprise-control-center).
+
 ```dockerfile
 version: '2.3'
 services:
   control-center:
-    image: confluentinc/cp-enterprise-control-center:5.3.0
+    image: confluentinc/cp-enterprise-control-center
 #    logging:
 #      driver: none
     ports:
@@ -558,6 +621,9 @@ services:
 ## Big Data
 
 ### Apache Nifi
+
+For more info - [check here](https://hub.docker.com/r/apache/nifi).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -574,6 +640,9 @@ services:
 ## Infrastructure
 
 ### Jaeger
+
+For more info - [check here](https://www.jaegertracing.io/docs/1.8/getting-started/#all-in-one).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -587,6 +656,9 @@ services:
 ```
 
 ### PACT Broker
+
+For more info - [check here](https://hub.docker.com/r/dius/pact-broker).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -613,6 +685,9 @@ services:
 ```
 
 ### SonarQube
+
+For more info - [check here](https://hub.docker.com/_/sonarqube).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -625,25 +700,32 @@ services:
 ```
 
 ### LiquiBase
+
+For more info - [check here](https://hub.docker.com/r/kilna/liquibase-postgres/).
+
 ```dockerfile
 version: '2.3'
 services:
   liquibase:
-    image: postgres
+    image: kilna/liquibase-postgres
 #    logging:
 #      driver: none
-    restart: always
     ports:
       - '32770:5432'
     depends_on:
        - postgres
     environment:
-      postgres_db: postgres
-      postgres_user: postgres
-      postgres_password: postgres
+      LIQUIBASE_HOST: postgres
+      LIQUIBASE_PORT: 5432
+      LIQUIBASE_DATABASE: postgres
+      LIQUIBASE_USERNAME: postgres
+      LIQUIBASE_PASSWORD: postgres
 ```
 
 ### Apache Atlas
+
+For more info - [check here](https://github.com/ing-bank/rokku-dev-apache-atlas).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -659,6 +741,9 @@ services:
 ```
 
 ### Schema Registry
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-schema-registry).
+
 ```dockerfile
 version: '2.3'
 services:
