@@ -9,62 +9,62 @@ All services have specified dependencies and configured to use each other.
 
 - [RDBMS:](#RDBMS)
     - [Postgres:](#Postgres)
-        - [PG Admin 4](#Postgres Admin)
+        - [PG Admin 4](#Postgres-Admin)
     - [Oracle](#Oracle)
     - [Cockroach](#Cockroach)
 
 
-- [Document Oriented:](#Document Oriented)
+- [Document Oriented](#Document-Oriented)
     - [MongoDB](#MongoDB)
     - [ArangoDB](#ArangoDB)
 
 
-- [Key Value:](#Key Value)
+- [Key Value:](#Key-Value)
     - [Redis](#Redis)
-        - [CLI](#Redis CLI)
+        - [CLI](#Redis-CLI)
     - [Infinispan](#Infinispan)
     - [Hazelcast](#Hazelcast)
 
 
-- [Column-oriented DBMS:](#Column Oriented DBMS)
+- [Column-oriented DBMS:](#Column-Oriented-DBMS)
     - [Cassandra](#Cassandra)
     - [ClickHouse:](#ClickHouse)
-        - [CLI](#ClickHouse CLI)
-        - [JDBC-Bridge](#ClickHouse JDBC Bridge)
+        - [CLI](#ClickHouse-CLI)
+        - [JDBC-Bridge](#ClickHouse-JDBC-Bridge)
         - [Redash](#Redash)
 
 
-- [Graph Databases:](#Graph Databases)
+- [Graph Databases:](#Graph-Databases)
     - [JanusGraph](#JanusGraph)
-    - [ArangoDB](#ArangoDB Graph)
+    - [ArangoDB](#ArangoDB-Graph)
 
 
-- [Search Engines:](#Search Engines)
+- [Search Engines:](#Search-Engines)
     - [ElasticSearch](#ElasticSearch)
-    - [ArangoDB](#ArangoDB Search)
+    - [ArangoDB](#ArangoDB-Search)
 
 
-- [Kafka infrastructure:](#Kafka infrastructure)
+- [Kafka infrastructure:](#Kafka-infrastructure)
     - [Kafka](#Kafka)
     - [Zookeeper](#Zookeeper)
-    - [Kafka Topics](#Kafka Topics)
-    - [Kafka REST](#Kafka REST)
+    - [Kafka Topics](#Kafka-Topics)
+    - [Kafka REST](#Kafka-REST)
+    - [Schema Registry](#Schema-Registry)
     - [KSQL:](#KSQL)
-        - [Client](#KSQL Client)
-        - [Control Center](#KSQL Control Center)
+        - [Client](#KSQL-Client)
+        - [Control Center](#KSQL-Control-Center)
 
 
-- [Big Data:](#Big Data)
-    - [Apache Nifi](#Apache Nifi)
+- [Big Data:](#Big-Data)
+    - [Apache Nifi](#Apache-Nifi)
 
 
 - [Infrastructure:](#Infrastructure)
     - [Jaeger](#Jaeger)
-    - [PACT Broker](#PACT Broker)
+    - [PACT Broker](#PACT-Broker)
     - [SonarQube](#SonarQube)
     - [LiquiBase](#LiquiBase)
-    - [Apache Atlas](#Apache Atlas)
-    - [Schema Registry](#Schema Registry)
+    - [Apache Atlas](#Apache-Atlas)
     
     
 ## Databases
