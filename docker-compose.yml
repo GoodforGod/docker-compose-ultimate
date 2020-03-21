@@ -37,7 +37,6 @@ services:
     ports:
       - '9081:8081'
     depends_on:
-      - zookeeper
       - kafka
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
@@ -52,8 +51,6 @@ services:
     ports:
       - '8083:8083'
     depends_on:
-      - zookeeper
-      - kafka
       - schema-registry
     environment:
       KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -69,8 +66,6 @@ services:
     ports:
       - '8001:8000'
     depends_on:
-      - zookeeper
-      - kafka
       - kafka-rest
       - schema-registry
     environment:
@@ -88,7 +83,6 @@ services:
     depends_on:
       - kafka
       - schema-registry
-      - zookeeper
     environment:
       KSQL_BOOTSTRAP_SERVERS: kafka:39092
       KSQL_LISTENERS: http://ksql-server:8088
@@ -102,7 +96,6 @@ services:
     logging:
       driver: none
     depends_on:
-      - kafka
       - ksql-server
     entrypoint: /bin/sh
     tty: true
@@ -115,7 +108,6 @@ services:
     ports:
       - '9021:9021'
     depends_on:
-      - zookeeper
       - kafka
       - schema-registry
       - ksql-server
@@ -161,6 +153,8 @@ services:
       driver: none
     ports:
       - '8010:80'
+    depends_on:
+      - postgres
     environment:
       - PGADMIN_DEFAULT_EMAIL=bob@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=postgres
@@ -408,7 +402,6 @@ services:
     ports:
       - '21000:21000'
     depends_on:
-      - zookeeper
       - kafka
 
 

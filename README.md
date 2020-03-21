@@ -85,6 +85,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/dpage/pgadmin4).
 
+Depends on [Postgres](#Postgres).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -94,6 +96,8 @@ services:
 #      driver: none
     ports:
       - '8010:80'
+    depends_on:
+      - postgres
     environment:
       - PGADMIN_DEFAULT_EMAIL=bob@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=postgres
@@ -111,8 +115,8 @@ services:
 #    logging:
 #      driver: none
     ports:
-    - '1521:1521'
-    - '5500:5500'
+      - '1521:1521'
+      - '5500:5500'
 ```
 
 #### Cockroach
@@ -134,7 +138,8 @@ services:
 
 ### Document Oriented
 
-
+Document store databases store each record and its associated data within a single document. 
+Each document contains semi-structured data that can be queried against using various query and analytics tools of the DBMS.
 
 #### MongoDB
 
@@ -174,6 +179,9 @@ services:
 
 ### Key-Value (Cache)
 
+The key-value part refers to the fact that the database stores data as a collection of key/value pairs. 
+This is a simple method of storing data, and it is known to scale well.
+
 #### Redis
 
 For more info - [check here](https://hub.docker.com/_/redis).
@@ -193,6 +201,8 @@ services:
 ##### Redis CLI
 
 For more info - [check here](https://hub.docker.com/r/rediscommander/redis-commander).
+
+Depends on [Redis](#Redis).
 
 ```dockerfile
 version: '2.3'
@@ -244,6 +254,9 @@ services:
 
 ### Column Oriented DBMS
 
+Columns store databases use a concept called a keyspace. A keyspace is kind of like a schema in the relational model. 
+The keyspace contains all the column families (kind of like tables in the relational model), which contain rows, which contain columns.
+
 #### Cassandra
 
 For more info - [check here](https://hub.docker.com/_/cassandra).
@@ -288,6 +301,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/yandex/clickhouse-client).
 
+Depends on [ClickHouse Server](#ClickHouse).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -303,6 +318,8 @@ services:
 ##### ClickHouse JDBC Bridge
 
 For more info - [check here](https://hub.docker.com/r/riftbit/clickhouse-jdbc-bridge-service) and [here](https://github.com/ClickHouse/clickhouse-jdbc-bridge).
+
+Depends on [ClickHouse Server](#ClickHouse).
 
 ```dockerfile
 version: '2.3'
@@ -321,7 +338,13 @@ services:
 
 ##### Redash
 
+Redash is an open-source data visualization tool used by companies as diverse as Soundcloud, Mozilla, and Waze. 
+It allows developers and analyts to query data, graph results, and share insights with others. 
+The best thing about Redash is that it is completely free to self-host.
+
 For more info - [check here](https://hub.docker.com/r/redash/redash) and [here](https://github.com/getredash/redash/blob/master/docker-compose.yml).
+
+Depends on [ClickHouse Server](#ClickHouse).
 
 ```dockerfile
 version: '2.3'
@@ -398,7 +421,15 @@ services:
 
 ### Graph Databases
 
+A graph database is a database that uses a graphical model to represent and store the data.
+The graph database model is an alternative to the relational model.
+In a relational database, data is stored in tables using a rigid structure with a predefined schema.
+In a graph database, there is no predefined schema as such. Rather, any schema is simply a reflection 
+of the data that has been entered. As more varied data is entered, the schema grows accordingly.
+
 #### JanusGraph
+
+Depends on [Cassandra](#Cassandra) and [Elastic Search](#ElasticSearch).
 
 For more info - [check here](https://hub.docker.com/r/janusgraph/janusgraph).
 
@@ -428,6 +459,8 @@ services:
 
 ### Search Engines
 
+Search engines or databases or services that allow fulltext and other types of search on data using 3-grams and other methods.
+
 #### ElasticSearch
 
 For more info - [check here](https://hub.docker.com/_/elasticsearch).
@@ -452,9 +485,14 @@ services:
 
 ## Kafka infrastructure
 
+Apache Kafka is a distributed streaming platform that is used to build real time streaming data pipelines 
+and applications that adapt to data streams.
+
 ### Kafka
 
 For more info - [check here](https://hub.docker.com/r/confluentinc/cp-kafka).
+
+Depends on [Zookeeper](#Zookeeper).
 
 ```dockerfile
 version: '2.3'
@@ -498,6 +536,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/landoop/kafka-topics-ui).
 
+Depends on [Kafka](#Kafka) and [Kafka REST](#Kafka REST) and [Schema Registry](#Schema Registry).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -508,7 +548,6 @@ services:
     ports:
       - '8001:8000'
     depends_on:
-      - zookeeper
       - kafka
       - kafka-rest
       - schema-registry
@@ -521,6 +560,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/confluentinc/cp-kafka-rest).
 
+Depends on [Kafka](#Kafka) and [Schema Registry](#Schema Registry).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -531,7 +572,6 @@ services:
     ports:
       - '8083:8083'
     depends_on:
-      - zookeeper
       - kafka
       - schema-registry
     environment:
@@ -541,10 +581,38 @@ services:
       KAFKA_REST_HOST_NAME: kafka
 ```
 
+### Schema Registry
+
+For more info - [check here](https://hub.docker.com/r/confluentinc/cp-schema-registry).
+
+Depends on [Kafka](#Kafka).
+
+```dockerfile
+version: '2.3'
+services:
+  schema-registry:
+    image: confluentinc/cp-schema-registry
+#    logging:
+#      driver: none
+    ports:
+      - '9081:8081'
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
+```
+
 
 ### KSQL
 
+KSQL is the streaming SQL engine for Apache Kafka. It provides an easy-to-use yet powerful interactive SQL interface 
+for stream processing on Kafka, without the need to write code in a programming language such as Java or Python.
+
 For more info - [check here](https://hub.docker.com/r/confluentinc/cp-ksql-server).
+
+Depends on [Kafka](#Kafka) and [Schema Registry](#Schema Registry).
 
 ```dockerfile
 version: '2.3'
@@ -558,7 +626,6 @@ services:
     depends_on:
       - kafka
       - schema-registry
-      - zookeeper
     environment:
       KSQL_BOOTSTRAP_SERVERS: kafka:39092
       KSQL_LISTENERS: http://ksql-server:8088
@@ -571,6 +638,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/confluentinc/cp-ksql-cli).
 
+Depends on [KSQL Server](#KSQL).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -579,7 +648,6 @@ services:
 #    logging:
 #      driver: none
     depends_on:
-      - kafka
       - ksql-server
     entrypoint: /bin/sh
     tty: true
@@ -588,6 +656,8 @@ services:
 #### KSQL Control Center
 
 For more info - [check here](https://hub.docker.com/r/confluentinc/cp-enterprise-control-center).
+
+Depends on [Kafka](#Kafka) and [KSQL Server](#KSQL).
 
 ```dockerfile
 version: '2.3'
@@ -599,9 +669,7 @@ services:
     ports:
       - '9021:9021'
     depends_on:
-      - zookeeper
       - kafka
-      - schema-registry
       - ksql-server
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:39092'
@@ -659,6 +727,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/dius/pact-broker).
 
+Depends on [Postgres](#Postgres).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -703,6 +773,8 @@ services:
 
 For more info - [check here](https://hub.docker.com/r/kilna/liquibase-postgres/).
 
+Depends on [Postgres](#Postgres).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -726,6 +798,8 @@ services:
 
 For more info - [check here](https://github.com/ing-bank/rokku-dev-apache-atlas).
 
+Depends on [Kafka](#Kafka).
+
 ```dockerfile
 version: '2.3'
 services:
@@ -736,28 +810,5 @@ services:
     ports:
       - '21000:21000'
     depends_on:
-      - zookeeper
       - kafka
-```
-
-### Schema Registry
-
-For more info - [check here](https://hub.docker.com/r/confluentinc/cp-schema-registry).
-
-```dockerfile
-version: '2.3'
-services:
-  schema-registry:
-    image: confluentinc/cp-schema-registry
-#    logging:
-#      driver: none
-    ports:
-      - '9081:8081'
-    depends_on:
-      - zookeeper
-      - kafka
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
 ```
