@@ -7,32 +7,41 @@ Or as a builder with configured docker compose dependencies.
 
 All services have specified dependencies and configured to use each other.
 
-- [Databases:](#Databases)
-    - [RDBMS:](#RDBMS)
-        - [Postgres:](#Postgres)
-            - [PG Admin 4](#Postgres Admin)
-        - [Oracle](#Oracle)
-        - [Cockroach](#Cockroach)
-    - [Document Oriented:](#Document Oriented)
-        - [MongoDB](#MongoDB)
-        - [ArangoDB](#ArangoDB)
-    - [Key Value:](#Key Value)
-        - [Redis](#Redis)
-            - [CLI](#Redis CLI)
-        - [Infinispan](#Infinispan)
-        - [Hazelcast](#Hazelcast)
-    - [Column-oriented DBMS:](#Column Oriented DBMS)
-        - [Cassandra](#Cassandra)
-        - [ClickHouse:](#ClickHouse)
-            - [CLI](#ClickHouse CLI)
-            - [JDBC-Bridge](#ClickHouse JDBC Bridge)
-            - [Redash](#Redash)
-    - [Graph Databases:](#Graph Databases)
-        - [JanusGraph](#JanusGraph)
-        - [ArangoDB](#ArangoDB Graph)
-    - [Search Engines:](#Search Engines)
-        - [ElasticSearch](#ElasticSearch)
-        - [ArangoDB](#ArangoDB Search)
+- [RDBMS:](#RDBMS)
+    - [Postgres:](#Postgres)
+        - [PG Admin 4](#Postgres Admin)
+    - [Oracle](#Oracle)
+    - [Cockroach](#Cockroach)
+
+
+- [Document Oriented:](#Document Oriented)
+    - [MongoDB](#MongoDB)
+    - [ArangoDB](#ArangoDB)
+
+
+- [Key Value:](#Key Value)
+    - [Redis](#Redis)
+        - [CLI](#Redis CLI)
+    - [Infinispan](#Infinispan)
+    - [Hazelcast](#Hazelcast)
+
+
+- [Column-oriented DBMS:](#Column Oriented DBMS)
+    - [Cassandra](#Cassandra)
+    - [ClickHouse:](#ClickHouse)
+        - [CLI](#ClickHouse CLI)
+        - [JDBC-Bridge](#ClickHouse JDBC Bridge)
+        - [Redash](#Redash)
+
+
+- [Graph Databases:](#Graph Databases)
+    - [JanusGraph](#JanusGraph)
+    - [ArangoDB](#ArangoDB Graph)
+
+
+- [Search Engines:](#Search Engines)
+    - [ElasticSearch](#ElasticSearch)
+    - [ArangoDB](#ArangoDB Search)
 
 
 - [Kafka infrastructure:](#Kafka infrastructure)
@@ -458,7 +467,10 @@ services:
 
 #### ArangoDB Graph
 
+ArangoDB be used as graph, check for [more here](https://www.arangodb.com/docs/stable/aql/graphs-traversals-explained.html)
+and [here](https://www.arangodb.com/arangodb-training-center/graphs/).
 
+Docker Compose [here](#ArangoDB).
 
 ### Search Engines
 
@@ -484,7 +496,9 @@ services:
 
 #### ArangoDB Search
 
+ArangoDB can be used as Search Engine, check for [more here](https://www.arangodb.com/arangodb-training-center/search/arangosearch/).
 
+Docker Compose [here](#ArangoDB).
 
 ## Kafka infrastructure
 
