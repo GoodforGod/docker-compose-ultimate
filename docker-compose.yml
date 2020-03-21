@@ -10,57 +10,63 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+
   kafka:
     image: 'confluentinc/cp-kafka:latest'
     logging:
       driver: none
-    depends_on:
-      - zookeeper
     ports:
       - '9092:9092'
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:39092,PLAINTEXT_HOST://localhost:9092'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Option advertised.listeners {name://host:port} used so someone can access kafka outside of container\cluster.
+      # 'kafka:29092' used by clickhouse-server inside docker-compose network, when 'localhost:9092' is used by containers inside network.
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+
 # schema-registry:
 #   image: 'confluentinc/cp-schema-registry:latest'
+#   ports:
+#     - '9081:8081'
 #   depends_on:
 #     - zookeeper
 #     - kafka
-#   ports:
-#     - '9081:8081'
 #   environment:
 #     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 #     SCHEMA_REGISTRY_HOST_NAME: schema-registry
 #     SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
 
+
 # kafka-rest:
 #   image: 'confluentinc/cp-kafka-rest:latest'
+#   ports:
+#     - '8083:8083'
 #   depends_on:
 #     - zookeeper
 #     - kafka
 #     - schema-registry
-#   ports:
-#     - '8083:8083'
 #   environment:
 #     KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
 #     KAFKA_REST_LISTENERS: 'http://kafka-rest:8083'
 #     KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 #     KAFKA_REST_HOST_NAME: kafka
 
+
 # kafka-topics:
 #   image: 'landoop/kafka-topics-ui:latest'
+#   ports:
+#     - '8001:8000'
 #   depends_on:
 #     - zookeeper
 #     - kafka
 #     - kafka-rest
 #     - schema-registry
-#   ports:
-#     - '8001:8000'
 #   environment:
 #     KAFKA_REST_PROXY_URL: 'kafka-rest:8083'
 #     PROXY: 'true'
@@ -69,18 +75,19 @@ services:
 ###########################################       KSQL
 # ksql-server:
 #   image: "confluentinc/cp-ksql-server:latest"
+#   ports:
+#     - '8088:8088'
 #   depends_on:
 #     - kafka
 #     - schema-registry
 #     - zookeeper
-#   ports:
-#     - '8088:8088'
 #   environment:
 #     KSQL_BOOTSTRAP_SERVERS: kafka:39092
 #     KSQL_LISTENERS: http://ksql-server:8088
 #     KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
 #     KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
 #     KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+
 
 # ksql-cli:
 #   image: confluentinc/cp-ksql-cli:5.3.0
@@ -90,16 +97,17 @@ services:
 #   entrypoint: /bin/sh
 #   tty: true
 
+
 # control-center:
 #   image: confluentinc/cp-enterprise-control-center:5.3.0
 #   hostname: control-center
+#   ports:
+#     - '9021:9021'
 #   depends_on:
 #     - zookeeper
 #     - kafka
 #     - schema-registry
 #     - ksql-server
-#   ports:
-#     - "9021:9021"
 #   environment:
 #     CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:39092'
 #     CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -117,15 +125,13 @@ services:
 # oracle:
 #   image: store/oracle/database-enterprise:12.2.0.1
 #   ports:
-#   - "1521:1521"
-#   - "5500:5500"
-
-
+#   - '1521:1521'
+#   - '5500:5500'
 
 
 #################################           POSTGRES
 # postgres:
-#   image: 'postgres:latest'
+#   image: postgres:latest
 #   ports:
 #     - '5432:5432'
 #   environment:
@@ -133,8 +139,9 @@ services:
 #     POSTGRES_USER: postgres
 #     POSTGRES_PASSWORD: postgres
 
+
 # pgadmin4:
-#   image: 'dpage/pgadmin4:latest'
+#   image: dpage/pgadmin4:latest
 #   ports:
 #     - '8010:80'
 #   environment:
@@ -147,15 +154,15 @@ services:
 #    image: cockroachdb/cockroach:latest
 #    command: start --insecure
 #    ports:
-#      - 26257:26257
-#      - 10000:8080
+#      - '26257:26257'
+#      - '10000:8080'
 
 
 #################################            ARANGO
   arangodb:
     image: arangodb:latest
     ports:
-      - "8529:8529"
+      - '8529:8529'
     environment:
       - ARANGO_NO_AUTH=1
 
@@ -170,6 +177,7 @@ services:
 #     - MONGO_INITDB_ROOT_PASSWORD=mongo
 #     - MONGO_INITDB_DATABASE=public
 
+
 ##################################         REDIS
 # redis:
 #   image: redis
@@ -178,47 +186,48 @@ services:
 #   command: >
 #     --requirepass test 
 
+
 # redis-commander:
 #   hostname: redis-commander
 #   image: rediscommander/redis-commander:latest
 #   restart: always
 #   ports:
-#     - "9200:8081"
+#     - '9200:8081'
 #   environment:
 #     - REDIS_HOSTS=local:redis:6379:0:test
 
 
 ###################################      ClickHouse
-
-# clickhouse_server:
-#   image: yandex/clickhouse-server
-#   ports:
-#     - "8123:8123"
-#     - "9000:9000"
-#     - "9009:9009"
-#   volumes:
-#     - ./config.xml:/etc/clickhouse-server/config.xml
-#
-#
-# clickhouse_client:
-#   image: yandex/clickhouse-client
-#   depends_on:
-#     - clickhouse_server
-#   command: ['--host', 'clickhouse_server']
+# To connect to kafka use - kafka:29092
+  clickhouse-server:
+    image: yandex/clickhouse-server
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+      - '9009:9009'
+    volumes:
+      - ./clickhouse/config.xml:/etc/clickhouse-server/config.xml
 
 
-# clickhouse_jdbc_bridge:
-#   image: riftbit/clickhouse-jdbc-bridge-service
-#   depends_on:
-#     - clickhouse_server
-#   ports:
-#     - "9019:9019"
-#   volumes:
-#     - ./datasources.properties:/etc/clickhouse-jdbc-bridge/datasources.properties
+  clickhouse-client:
+    image: yandex/clickhouse-client
+    depends_on:
+      - clickhouse-server
+    command: ['--host', 'clickhouse-server']
+
+
+  clickhouse-jdbc-bridge:
+    image: riftbit/clickhouse-jdbc-bridge-service
+    ports:
+      - '9019:9019'
+    depends_on:
+      - clickhouse-server
+    volumes:
+      - ./clickhouse/datasources.properties:/etc/clickhouse-jdbc-bridge/datasources.properties
 
 
 ##################################         REDASH
-# redash_createdb:
+# redash-createdb:
 #   image: redash/redash
 #   depends_on:
 #     - redis
@@ -231,17 +240,18 @@ services:
 #     REDASH_LOG_LEVEL: "INFO"
 #     REDASH_RATELIMIT_ENABLED: "false"
 
-# redash_server:
+
+# redash-server:
 #   image: redash/redash
 #   logging:
 #     driver: none
 #   ports:
-#     - "5000:5000"
-#     - "5678:5678"
+#     - '5000:5000'
+#     - '5678:5678'
 #   depends_on:
 #     - redis
 #     - postgres
-#     - redash_createdb
+#     - redash-createdb
 #   command: dev_server
 #   environment:
 #     PYTHONUNBUFFERED: 0
@@ -251,28 +261,28 @@ services:
 #     REDASH_RATELIMIT_ENABLED: "false"
 
 
-# redash_scheduler:
+# redash-scheduler:
 #   image: redash/redash
 #   logging:
 #     driver: none
 #   depends_on:
 #     - redis
 #     - postgres
-#     - redash_createdb
+#     - redash-createdb
 #   command: dev_scheduler
 #   environment:
 #     REDASH_REDIS_URL: "redis://redis:6379/0"
 #     REDASH_RATELIMIT_ENABLED: "false"
 
 
-# redash_worker:
+# redash-worker:
 #   image: redash/redash
 #   logging:
 #     driver: none
 #   depends_on:
 #     - redis
 #     - postgres
-#     - redash_createdb
+#     - redash-createdb
 #   command: dev_worker
 #   environment:
 #     PYTHONUNBUFFERED: 0
@@ -295,9 +305,9 @@ services:
 
 ##################################         ELASTIC SEARCH
 #  elastic:
+#    image: elasticsearch:latest
 #    logging:
 #      driver: none
-#    image: elasticsearch:latest
 #    ports:
 #      - 9200:9200
 #      - 9300:9300
@@ -309,7 +319,7 @@ services:
 # sonarqube:
 #   image: sonarqube
 #   ports:
-#     - "9000:9000"
+#     - '9000:9000'
 
 
 ##############################             JAEGER
@@ -318,18 +328,18 @@ services:
     logging:
       driver: none
     ports:
-      - "6831:6831/udp"
-      - "16686:16686"
+      - '6831:6831/udp'
+      - '16686:16686'
 
 
 ##############################             LiquiBase
-# liquibase_db:
-#   logging:
-#     driver: none
+# liquibase:
 #   image: postgres
 #   restart: always
+#   logging:
+#     driver: none
 #   ports:
-#     - "32770:5432"
+#     - '32770:5432'
 #    depends_on:
 #      - postgres
 #   environment:
@@ -342,7 +352,7 @@ services:
 #  atlas-server:
 #    image: wbaa/rokku-dev-apache-atlas
 #    ports:
-#      - 21000:21000
+#      - '21000:21000'
 #    depends_on:
 #      - zookeeper
 #      - kafka
@@ -352,11 +362,11 @@ services:
   cassandra:
     image: cassandra:latest
     ports:
-      - 9160:9160 # Thrift client API
-      - 9042:9042 # CQL native transport port
-      - 7199:7199 # JMX
-      - 7001:7001 # TLS Internode communication
-      - 7000:7000 # Internode communication
+      - '9160:9160' # Thrift client API
+      - '9042:9042' # CQL native transport port
+      - '7199:7199' # JMX
+      - '7001:7001' # TLS Internode communication
+      - '7000:7000' # Internode communication
     environment:
       CASSANDRA_START_RPC: 'true'
 
@@ -364,10 +374,10 @@ services:
   janusgraph:
     image: janusgraph/janusgraph:latest
     volumes:
-      - ./conf:/opt/janusgraph/conf
-#      - ./conf:/etc/opt/janusgraph
+      - ./janusgraph:/opt/janusgraph/conf
+#      - ./janusgraph:/etc/opt/janusgraph
     ports:
-      - 8182:8182
+      - '8182:8182'
     depends_on:
       - elasticsearch
       - cassandra
@@ -388,8 +398,8 @@ services:
 #   ports:
 #     - '10001:80'
 #   environment:
-#     PACT_BROKER_BASIC_AUTH_USERNAME: 'devsun'
-#     PACT_BROKER_BASIC_AUTH_PASSWORD: '2bnF20Aj'
+#     PACT_BROKER_BASIC_AUTH_USERNAME: 'root'
+#     PACT_BROKER_BASIC_AUTH_PASSWORD: '1234'
 #     PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME: 'true'
 #     PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD: 'true'
 #     PACT_BROKER_DATABASE_HOST: db
