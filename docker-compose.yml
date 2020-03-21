@@ -210,12 +210,13 @@ services:
       - '6379:6379'
     command: redis-server --requirepass test
 
+
   redis-commander:
     image: rediscommander/redis-commander
     logging:
       driver: none
     ports:
-      - '9200:8081'
+      - '6380:8081'
     environment:
       - REDIS_HOSTS=local:redis:6379:0:test
 
@@ -261,6 +262,7 @@ services:
     logging:
       driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
     command: create_db
@@ -280,6 +282,7 @@ services:
       - '5000:5000'
       - '5678:5678'
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -297,6 +300,7 @@ services:
     logging:
       driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -311,6 +315,7 @@ services:
     logging:
       driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -349,12 +354,12 @@ services:
 
   #################################         ELASTIC SEARCH
   elastic:
-    image: elasticsearch
+    image: elasticsearch:7.6.1
     logging:
       driver: none
     ports:
-      - 9200:9200
-      - 9300:9300
+      - '9200:9200'
+      - '9300:9300'
     environment:
       discovery.type: single-node
 
@@ -365,7 +370,7 @@ services:
     logging:
       driver: none
     ports:
-      - '9000:9000'
+      - '9090:9000'
 
 
   #############################             JAEGER
@@ -424,9 +429,9 @@ services:
     image: janusgraph/janusgraph
     logging:
       driver: none
-    volumes:
-      - ./janusgraph:/opt/janusgraph/conf
-      #- ./janusgraph:/etc/opt/janusgraph
+#    volumes:
+#      - ./janusgraph:/opt/janusgraph/conf
+#      - ./janusgraph:/etc/opt/janusgraph
     ports:
       - '8182:8182'
     depends_on:
@@ -468,6 +473,6 @@ services:
     logging:
       driver: none
     ports:
-      - '9090:8080'
+      - '8090:8080'
 
 

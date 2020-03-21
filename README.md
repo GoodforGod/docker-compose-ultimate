@@ -184,10 +184,10 @@ version: '2.3'
 services:
   redis-commander:
     image: rediscommander/redis-commander
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9200:8081'
+      - '6380:8081'
     environment:
       - REDIS_HOSTS=local:redis:6379:0:test
 ```
@@ -295,6 +295,7 @@ services:
 #    logging:
 #      driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
     command: create_db
@@ -314,6 +315,7 @@ services:
       - '5000:5000'
       - '5678:5678'
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -331,6 +333,7 @@ services:
     logging:
       driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -345,6 +348,7 @@ services:
     logging:
       driver: none
     depends_on:
+      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
@@ -412,8 +416,8 @@ version: '2.3'
 services:
   kafka:
     image: confluentinc/cp-kafka
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9092:9092'
     depends_on:
@@ -435,8 +439,8 @@ version: '2.3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -448,8 +452,8 @@ version: '2.3'
 services:
   kafka-topics:
     image: landoop/kafka-topics-ui
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8001:8000'
     depends_on:
@@ -468,8 +472,8 @@ version: '2.3'
 services:
   kafka-rest:
     image: confluentinc/cp-kafka-rest
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8083:8083'
     depends_on:
@@ -512,8 +516,8 @@ version: '2.3'
 services:
   ksql-cli:
     image: confluentinc/cp-ksql-cli:5.3.0
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     depends_on:
       - kafka
       - ksql-server
@@ -527,8 +531,8 @@ version: '2.3'
 services:
   control-center:
     image: confluentinc/cp-enterprise-control-center:5.3.0
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9021:9021'
     depends_on:
@@ -559,10 +563,10 @@ version: '2.3'
 services:
   nifi:
     image: apache/nifi
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9090:8080'
+      - '8090:8080'
 ```
 
 
@@ -575,8 +579,8 @@ version: '2.3'
 services:
   jaeger:
     image: jaegertracing/all-in-one
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '6831:6831/udp'
       - '16686:16686'
@@ -588,8 +592,8 @@ version: '2.3'
 services:
   pact-broker:
     image: dius/pact-broker
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     links:
       - postgres
     depends_on:
@@ -613,11 +617,11 @@ services:
 version: '2.3'
 services:
   sonarqube:
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     image: sonarqube
     ports:
-      - '9000:9000'
+      - '9090:9000'
 ```
 
 ### LiquiBase
@@ -626,8 +630,8 @@ version: '2.3'
 services:
   liquibase:
     image: postgres
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     restart: always
     ports:
       - '32770:5432'
@@ -645,8 +649,8 @@ version: '2.3'
 services:
   atlas-server:
     image: wbaa/rokku-dev-apache-atlas
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '21000:21000'
     depends_on:
@@ -660,8 +664,8 @@ version: '2.3'
 services:
   schema-registry:
     image: confluentinc/cp-schema-registry
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9081:8081'
     depends_on:
