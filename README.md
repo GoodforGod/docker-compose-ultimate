@@ -1,6 +1,6 @@
 # Ultimate Docker Compose for (Kafka, Zookeeper, KSQL, Postgres, MongoDB, ArangoDB, Oracle, ClickHouse, PACT, Jaeger and more)
 
-Docker Compose for all services that I was working with or configured while developing.
+*Docker Compose Version 2.3* for all services that I was working with or configured while developing.
 
 Just in case I need to *ready-to-run* them all so I can do it from one place as *Docker-Compose*.
 Or as a builder with configured docker compose dependencies.
@@ -83,6 +83,7 @@ version: '2.3'
 services:
   postgres:
     image: postgres
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -104,6 +105,7 @@ version: '2.3'
 services:
   pgadmin4:
     image: dpage/pgadmin4
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -124,6 +126,7 @@ version: '2.3'
 services:
   oracle:
     image: store/oracle/database-enterprise:12.2.0.1
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -140,6 +143,7 @@ version: '2.3'
 services:
   cockroach:
     image: cockroachdb/cockroach
+    restart: on-failure
 #    logging:
 #      driver: none
     command: start --insecure
@@ -162,6 +166,7 @@ version: '2.3'
 services:
   mongo:
     image: mongo
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -181,8 +186,10 @@ version: '2.3'
 services:
   arangodb:
     image: arangodb
+    restart: on-failure
 #    logging:
 #      driver: none
+    restart: on-failure
     ports:
       - '8529:8529'
     environment:
@@ -203,6 +210,7 @@ version: '2.3'
 services:
   redis:
     image: redis
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -221,6 +229,7 @@ version: '2.3'
 services:
   redis-commander:
     image: rediscommander/redis-commander
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -238,6 +247,7 @@ version: '2.3'
 services:
   infinispan:
     image: infinispan/server
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -256,6 +266,7 @@ version: '2.3'
 services:
   hazelcast:
     image: hazelcast/hazelcast
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -278,6 +289,7 @@ version: '2.3'
 services:
   cassandra:
     image: cassandra
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -299,6 +311,7 @@ version: '2.3'
 services:
   clickhouse-server:
     image: yandex/clickhouse-server
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -320,6 +333,7 @@ version: '2.3'
 services:
   clickhouse-client:
     image: yandex/clickhouse-client
+    restart: on-failure
 #    logging:
 #      driver: none
     depends_on:
@@ -338,6 +352,7 @@ version: '2.3'
 services:
   clickhouse-jdbc-bridge:
     image: riftbit/clickhouse-jdbc-bridge-service
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -380,6 +395,7 @@ services:
 
   redash-server:
     image: redash/redash
+    restart: on-failure
     logging:
       driver: none
     ports:
@@ -401,6 +417,7 @@ services:
 
   redash-scheduler:
     image: redash/redash
+    restart: on-failure
     logging:
       driver: none
     depends_on:
@@ -416,6 +433,7 @@ services:
 
   redash-worker:
     image: redash/redash
+    restart: on-failure
     logging:
       driver: none
     depends_on:
@@ -450,6 +468,7 @@ version: '2.3'
 services:
   janusgraph:
     image: janusgraph/janusgraph
+    restart: on-failure
 #    logging:
 #      driver: none
     volumes:
@@ -484,7 +503,8 @@ For more info - [check here](https://hub.docker.com/_/elasticsearch).
 version: '2.3'
 services:
   elastic:
-     image: elasticsearch
+    image: elasticsearch
+    restart: on-failure
 #    logging:
 #      driver: none
      ports:
@@ -516,6 +536,7 @@ version: '2.3'
 services:
   kafka:
     image: confluentinc/cp-kafka
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -542,6 +563,7 @@ version: '2.3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper
+    restart: on-failure
 #    logging:
 #      driver: none
     environment:
@@ -560,6 +582,7 @@ version: '2.3'
 services:
   kafka-topics:
     image: landoop/kafka-topics-ui
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -584,6 +607,7 @@ version: '2.3'
 services:
   kafka-rest:
     image: confluentinc/cp-kafka-rest
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -609,6 +633,7 @@ version: '2.3'
 services:
   schema-registry:
     image: confluentinc/cp-schema-registry
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -636,6 +661,7 @@ version: '2.3'
 services:
   ksql-server:
     image: confluentinc/cp-ksql-server
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -662,6 +688,7 @@ version: '2.3'
 services:
   ksql-cli:
     image: confluentinc/cp-ksql-cli
+    restart: on-failure
 #    logging:
 #      driver: none
     depends_on:
@@ -681,6 +708,7 @@ version: '2.3'
 services:
   control-center:
     image: confluentinc/cp-enterprise-control-center
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -714,6 +742,7 @@ version: '2.3'
 services:
   nifi:
     image: apache/nifi
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -733,6 +762,7 @@ version: '2.3'
 services:
   jaeger:
     image: jaegertracing/all-in-one
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -751,6 +781,7 @@ version: '2.3'
 services:
   pact-broker:
     image: dius/pact-broker
+    restart: on-failure
 #    logging:
 #      driver: none
     links:
@@ -779,9 +810,10 @@ For more info - [check here](https://hub.docker.com/_/sonarqube).
 version: '2.3'
 services:
   sonarqube:
+    image: sonarqube
+    restart: on-failure
 #    logging:
 #      driver: none
-    image: sonarqube
     ports:
       - '9090:9000'
 ```
@@ -797,6 +829,7 @@ version: '2.3'
 services:
   liquibase:
     image: kilna/liquibase-postgres
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
@@ -822,6 +855,7 @@ version: '2.3'
 services:
   atlas-server:
     image: wbaa/rokku-dev-apache-atlas
+    restart: on-failure
 #    logging:
 #      driver: none
     ports:
