@@ -1,7 +1,7 @@
 version: '2.3'
 services:
 
-  ##################################            KAFKA
+  ##################################            CONFLUENT
   zookeeper:
     image: confluentinc/cp-zookeeper
     restart: on-failure
@@ -10,6 +10,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: WARN
+      ZOOKEEPER_TOOLS_LOG4J_LOGLEVEL: ERROR
 
 
   kafka:
@@ -24,27 +26,15 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
+      KAFKA_LOG4J_LOGGERS: org.apache.zookeeper=WARN, org.apache.kafka=WARN, kafka=WARN, kafka.cluster=WARN, kafka.controller=WARN, kafka.coordinator=WARN, kafka.log=WARN, kafka.server=WARN, kafka.zookeeper=WARN, state.change.logger=WARN
       # Option advertised.listeners {name://host:port} used so someone can access kafka outside of container\cluster.
       # 'kafka:29092' used by clickhouse-server inside docker-compose network, when 'localhost:9092' is used by containers inside network.
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-
-  schema-registry:
-    image: confluentinc/cp-schema-registry
-    restart: on-failure
-    logging:
-      driver: none
-    ports:
-      - '9081:8081'
-    depends_on:
-      - kafka
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
 
 
   kafka-rest:
@@ -78,7 +68,6 @@ services:
       PROXY: 'true'
 
 
-  ##########################################       KSQL
   ksql-server:
     image: confluentinc/cp-ksql-server
     restart: on-failure
@@ -106,6 +95,21 @@ services:
       - ksql-server
     entrypoint: /bin/sh
     tty: true
+
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry
+    restart: on-failure
+    logging:
+      driver: none
+    ports:
+      - '9081:8081'
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
 
 
   control-center:
@@ -502,5 +506,3 @@ services:
       driver: none
     ports:
       - '8090:8080'
-
-
