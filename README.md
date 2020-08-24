@@ -60,6 +60,7 @@ All services have specified dependencies and configured to use each other.
 
 
 - [Infrastructure:](#Infrastructure)
+    - [Minio (S3)](#Minio)
     - [Jaeger](#Jaeger)
     - [PACT Broker](#PACT-Broker)
     - [SonarQube](#SonarQube)
@@ -752,6 +753,51 @@ services:
 
 
 ## Infrastructure
+
+### Minio
+```dockerfile
+version: '2.3'
+services:
+  minio1:
+    image: minio/minio
+    restart: on-failure
+#   logging:
+#     driver: none
+    ports:
+      - "9011:9000"
+    volumes:
+      - /data1
+      - /data2
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server http://minio{1...2}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio2:
+    image: minio/minio
+    restart: on-failure
+#   logging:
+#     driver: none
+    ports:
+      - "9012:9000"
+    volumes:
+      - /data1
+      - /data2
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server http://minio{1...2}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+```
 
 ### Jaeger
 

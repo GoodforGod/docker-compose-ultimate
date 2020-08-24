@@ -136,6 +136,46 @@ services:
       PORT: 9021
 
 
+  ############################             MINIO (S3)
+  minio1:
+    image: minio/minio
+    restart: on-failure
+    logging:
+      driver: none
+    ports:
+      - "9011:9000"
+    volumes:
+      - /data1
+      - /data2
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server http://minio{1...2}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio2:
+    image: minio/minio
+    restart: on-failure
+    ports:
+      - "9012:9000"
+    volumes:
+      - /data1
+      - /data2
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server http://minio{1...2}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+
   ############################             ORACLE
   oracle:
     image: store/oracle/database-enterprise:12.2.0.1
