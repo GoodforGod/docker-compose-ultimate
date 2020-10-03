@@ -1,10 +1,10 @@
 version: '2.3'
 services:
 
-  ##################################            CONFLUENT
+  ##################################            CONFLUENT | KAFKA | ZOOKEEPER
   zookeeper:
     image: confluentinc/cp-zookeeper
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     environment:
@@ -16,7 +16,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -39,7 +39,7 @@ services:
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -55,7 +55,7 @@ services:
 
   kafka-topics:
     image: landoop/kafka-topics-ui
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -70,7 +70,7 @@ services:
 
   ksql-server:
     image: confluentinc/cp-ksql-server
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -88,7 +88,7 @@ services:
 
   ksql-cli:
     image: confluentinc/cp-ksql-cli
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     depends_on:
@@ -99,7 +99,7 @@ services:
 
   schema-registry:
     image: confluentinc/cp-schema-registry
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -114,7 +114,7 @@ services:
 
   control-center:
     image: confluentinc/cp-enterprise-control-center
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -135,11 +135,20 @@ services:
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
 
+  #################################### NATS
+  nats:
+    image: nats
+    logging:
+      driver: none
+    ports:
+      - "8222:8222"
+      - "4222:4222"
+    hostname: nats-server
 
   ############################             MINIO (S3)
   minio1:
     image: minio/minio
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -159,7 +168,9 @@ services:
 
   minio2:
     image: minio/minio
-    restart: on-failure
+    restart: unless-stopped
+    logging:
+      driver: none
     ports:
       - "9012:9000"
     volumes:
@@ -179,7 +190,7 @@ services:
   ############################             ORACLE
   oracle:
     image: store/oracle/database-enterprise:12.2.0.1
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -190,7 +201,7 @@ services:
   ################################           POSTGRES
   postgres:
     image: postgres
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -203,7 +214,7 @@ services:
 
   pgadmin4:
     image: dpage/pgadmin4
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -218,7 +229,7 @@ services:
   #################################         COCKROACH
   cockroach:
     image: cockroachdb/cockroach
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     command: start --insecure
@@ -230,7 +241,7 @@ services:
   ################################            ARANGO
   arangodb:
     image: arangodb
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -242,7 +253,7 @@ services:
   ###############################           MONGO
   mongo:
     image: mongo
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -256,7 +267,7 @@ services:
   #################################         REDIS
   redis:
     image: redis
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -266,7 +277,7 @@ services:
 
   redis-commander:
     image: rediscommander/redis-commander
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -279,7 +290,7 @@ services:
   # To connect to kafka use - kafka:29092
   clickhouse-server:
     image: yandex/clickhouse-server
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -292,7 +303,7 @@ services:
 
   clickhouse-client:
     image: yandex/clickhouse-client
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     depends_on:
@@ -302,7 +313,7 @@ services:
 
   clickhouse-jdbc-bridge:
     image: riftbit/clickhouse-jdbc-bridge-service
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -333,7 +344,7 @@ services:
 
   redash-server:
     image: redash/redash
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -355,7 +366,7 @@ services:
 
   redash-scheduler:
     image: redash/redash
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     depends_on:
@@ -371,7 +382,7 @@ services:
 
   redash-worker:
     image: redash/redash
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     depends_on:
@@ -392,7 +403,7 @@ services:
 
   infinispan:
     image: infinispan/server
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -405,7 +416,7 @@ services:
   #################################         INFINISPAN
   hazelcast:
     image: hazelcast/hazelcast
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -417,7 +428,7 @@ services:
   #################################         ELASTIC SEARCH
   elastic:
     image: elasticsearch:7.6.1
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -430,7 +441,7 @@ services:
   ###############################          SONARQUBE
   sonarqube:
     image: sonarqube
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -440,7 +451,7 @@ services:
   #############################             JAEGER
   jaeger:
     image: jaegertracing/all-in-one
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -451,7 +462,7 @@ services:
   #############################             LiquiBase
   liquibase:
     image: kilna/liquibase-postgres
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -469,7 +480,7 @@ services:
   #############################             APACHE ATLAS
   atlas-server:
     image: wbaa/rokku-dev-apache-atlas
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -481,7 +492,7 @@ services:
   #############################             CASSANDRA
   cassandra:
     image: cassandra
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
@@ -496,7 +507,7 @@ services:
   #############################             JANUS GRAPH
   janusgraph:
     image: janusgraph/janusgraph
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     #    volumes:
@@ -517,7 +528,7 @@ services:
   #############################             PACT BROKER
   pact-broker:
     image: dius/pact-broker
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     links:
@@ -541,7 +552,7 @@ services:
   #############################           Apache Nifi
   nifi:
     image: apache/nifi
-    restart: on-failure
+    restart: unless-stopped
     logging:
       driver: none
     ports:
