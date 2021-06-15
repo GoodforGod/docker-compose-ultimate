@@ -17,6 +17,7 @@ All services have specified dependencies and configured to use each other.
 - [Document Oriented](#Document-Oriented)
     - [MongoDB](#MongoDB)
     - [ArangoDB](#ArangoDB)
+    - [ArangoDB Cluster](#ArangoDB-Cluster)
 
 
 - [Key Value:](#Key-Value)
@@ -200,6 +201,182 @@ services:
       - '8529:8529'
     environment:
       - ARANGO_NO_AUTH=1
+```
+
+##### ArangoDB Cluster
+
+For more info - [check here](https://www.arangodb.com/docs/stable/architecture-deployment-modes-cluster.html).
+
+```dockerfile
+version: '2.3'
+services:
+  arangodb-agent1:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication false
+              --agency.my-address tcp://arangodb-agent1:8529
+              --agency.endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --agency.activate true
+              --agency.size 3
+              --agency.supervision true
+              --database.directory /var/lib/arangodb3/agency1"
+
+  arangodb-agent2:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication false
+              --agency.my-address tcp://arangodb-agent2:8529
+              --agency.endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --agency.activate true
+              --agency.size 3
+              --agency.supervision true
+              --database.directory /var/lib/arangodb3/agency2"
+    depends_on:
+      - arangodb-agent1
+
+  arangodb-agent3:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication false
+              --agency.my-address tcp://arangodb-agent3:8529
+              --agency.endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --agency.activate true
+              --agency.size 3
+              --agency.supervision true
+              --database.directory /var/lib/arangodb3/agency3"
+    depends_on:
+      - arangodb-agent1
+
+  arangodb-coordinator1:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-coordinator1:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info coord1
+              --cluster.my-role COORDINATOR
+              --database.directory /var/lib/arangodb3/arangodb-coordinator1"
+    ports:
+      - '8529:8529'
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
+
+  arangodb-coordinator2:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-coordinator2:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info coord2
+              --cluster.my-role COORDINATOR
+              --database.directory /var/lib/arangodb3/arangodb-coordinator2"
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
+
+  arangodb-coordinator3:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-coordinator3:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info coord3
+              --cluster.my-role COORDINATOR
+              --database.directory /var/lib/arangodb3/arangodb-coordinator3"
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
+
+  arangodb-db1:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-db1:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info arangodb-db1
+              --cluster.my-role DBSERVER
+              --database.directory /var/lib/arangodb3/arangodb-db1"
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
+
+  arangodb-db2:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-db2:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info arangodb-db2
+              --cluster.my-role DBSERVER
+              --database.directory /var/lib/arangodb3/arangodb-db2"
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
+
+  arangodb-db3:
+    image: arangodb/arangodb:3.7.11
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: "arangod --server.authentication=false
+              --cluster.my-address tcp://arangodb-db3:8529
+              --cluster.agency-endpoint tcp://arangodb-agent1:8529
+              --server.endpoint tcp://0.0.0.0:8529
+              --cluster.my-local-info arangodb-db3
+              --cluster.my-role DBSERVER
+              --database.directory /var/lib/arangodb3/arangodb-db3"
+    depends_on:
+      - arangodb-agent1
+      - arangodb-agent2
+      - arangodb-agent3
 ```
 
 ### Key Value
