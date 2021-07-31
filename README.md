@@ -120,8 +120,8 @@ services:
     depends_on:
       - postgres
     environment:
-      - PGADMIN_DEFAULT_EMAIL=bob@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=postgres
+      PGADMIN_DEFAULT_EMAIL: bob@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
 ```
 
 #### Oracle
@@ -179,9 +179,9 @@ services:
     ports:
       - '27017:27017'
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongo
-      - MONGO_INITDB_ROOT_PASSWORD=mongo
-      - MONGO_INITDB_DATABASE=public
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: public
 ```
 
 #### ArangoDB
@@ -200,7 +200,7 @@ services:
     ports:
       - '8529:8529'
     environment:
-      - ARANGO_NO_AUTH=1
+      ARANGO_NO_AUTH: 1
 ```
 
 ##### ArangoDB Cluster
@@ -216,15 +216,15 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication false
               --agency.my-address tcp://arangodb-agent1:8529
               --agency.endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --agency.activate true
               --agency.size 3
               --agency.supervision true
-              --database.directory /var/lib/arangodb3/agency1"
+              --database.directory /var/lib/arangodb3/agency1'
 
   arangodb-agent2:
     image: arangodb/arangodb:3.7.11
@@ -232,15 +232,15 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication false
               --agency.my-address tcp://arangodb-agent2:8529
               --agency.endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --agency.activate true
               --agency.size 3
               --agency.supervision true
-              --database.directory /var/lib/arangodb3/agency2"
+              --database.directory /var/lib/arangodb3/agency2'
     depends_on:
       - arangodb-agent1
 
@@ -250,15 +250,15 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication false
               --agency.my-address tcp://arangodb-agent3:8529
               --agency.endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --agency.activate true
               --agency.size 3
               --agency.supervision true
-              --database.directory /var/lib/arangodb3/agency3"
+              --database.directory /var/lib/arangodb3/agency3'
     depends_on:
       - arangodb-agent1
 
@@ -268,14 +268,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-coordinator1:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info coord1
               --cluster.my-role COORDINATOR
-              --database.directory /var/lib/arangodb3/arangodb-coordinator1"
+              --database.directory /var/lib/arangodb3/arangodb-coordinator1'
     ports:
       - '8529:8529'
     depends_on:
@@ -289,14 +289,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-coordinator2:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info coord2
               --cluster.my-role COORDINATOR
-              --database.directory /var/lib/arangodb3/arangodb-coordinator2"
+              --database.directory /var/lib/arangodb3/arangodb-coordinator2'
     depends_on:
       - arangodb-agent1
       - arangodb-agent2
@@ -308,14 +308,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-coordinator3:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info coord3
               --cluster.my-role COORDINATOR
-              --database.directory /var/lib/arangodb3/arangodb-coordinator3"
+              --database.directory /var/lib/arangodb3/arangodb-coordinator3'
     depends_on:
       - arangodb-agent1
       - arangodb-agent2
@@ -327,14 +327,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-db1:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info arangodb-db1
               --cluster.my-role DBSERVER
-              --database.directory /var/lib/arangodb3/arangodb-db1"
+              --database.directory /var/lib/arangodb3/arangodb-db1'
     depends_on:
       - arangodb-agent1
       - arangodb-agent2
@@ -346,14 +346,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-db2:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info arangodb-db2
               --cluster.my-role DBSERVER
-              --database.directory /var/lib/arangodb3/arangodb-db2"
+              --database.directory /var/lib/arangodb3/arangodb-db2'
     depends_on:
       - arangodb-agent1
       - arangodb-agent2
@@ -365,14 +365,14 @@ services:
 #    logging:
 #      driver: none
     environment:
-      - ARANGO_NO_AUTH=1
-    command: "arangod --server.authentication=false
+      ARANGO_NO_AUTH: 1
+    command: 'arangod --server.authentication=false
               --cluster.my-address tcp://arangodb-db3:8529
               --cluster.agency-endpoint tcp://arangodb-agent1:8529
               --server.endpoint tcp://0.0.0.0:8529
               --cluster.my-local-info arangodb-db3
               --cluster.my-role DBSERVER
-              --database.directory /var/lib/arangodb3/arangodb-db3"
+              --database.directory /var/lib/arangodb3/arangodb-db3'
     depends_on:
       - arangodb-agent1
       - arangodb-agent2
@@ -418,7 +418,7 @@ services:
     ports:
       - '6380:8081'
     environment:
-      - REDIS_HOSTS=local:redis:6379:0:test
+      REDIS_HOSTS: local:redis:6379:0:test
 ```
 
 #### Infinispan
@@ -436,8 +436,8 @@ services:
     ports:
       - '11222:11222'
     environment:
-      - USER=test
-      - PASS=test
+      USER: admin
+      PASS: admin
 ```
 
 #### Hazelcast
@@ -455,7 +455,7 @@ services:
     ports:
       - '5701:5701'
     environment:
-      - JAVA_OPTS=-Dhazelcast.shutdownhook.policy=GRACEFUL
+      JAVA_OPTS: -Dhazelcast.shutdownhook.policy=GRACEFUL
 ```
 
 ### Column Oriented DBMS
@@ -570,10 +570,10 @@ services:
     command: create_db
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: "redis://redis:6379/0"
-      REDASH_DATABASE_URL: "postgres://postgres:postgres@postgres/postgres"
-      REDASH_LOG_LEVEL: "INFO"
-      REDASH_RATELIMIT_ENABLED: "false"
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      REDASH_LOG_LEVEL: INFO
+      REDASH_RATELIMIT_ENABLED: 'false
 
 
   redash-server:
@@ -592,10 +592,10 @@ services:
     command: dev_server
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: "redis://redis:6379/0"
-      REDASH_DATABASE_URL: "postgres://postgres:postgres@postgres/postgres"
-      REDASH_LOG_LEVEL: "INFO"
-      REDASH_RATELIMIT_ENABLED: "false"
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      REDASH_LOG_LEVEL: INFO
+      REDASH_RATELIMIT_ENABLED: 'false'
 
 
   redash-scheduler:
@@ -610,8 +610,8 @@ services:
       - redash-createdb
     command: dev_scheduler
     environment:
-      REDASH_REDIS_URL: "redis://redis:6379/0"
-      REDASH_RATELIMIT_ENABLED: "false"
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_RATELIMIT_ENABLED: 'false'
 
 
   redash-worker:
@@ -627,9 +627,9 @@ services:
     command: dev_worker
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: "redis://redis:6379/0"
-      REDASH_DATABASE_URL: "postgres://postgres:postgres@postgres/postgres"
-      REDASH_LOG_LEVEL: "INFO"
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      REDASH_LOG_LEVEL: INFO
 ```
 
 ### Graph Databases
@@ -775,7 +775,7 @@ services:
       - kafka-rest
       - schema-registry
     environment:
-      KAFKA_REST_PROXY_URL: 'kafka-rest:8083'
+      KAFKA_REST_PROXY_URL: kafka-rest:8083
       PROXY: 'true'
 ```
 
@@ -799,9 +799,9 @@ services:
       - kafka
       - schema-registry
     environment:
-      KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_REST_LISTENERS: 'http://kafka-rest:8083'
-      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_REST_LISTENERS: http://kafka-rest:8083
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_REST_HOST_NAME: kafka
 ```
 
@@ -824,9 +824,9 @@ services:
     depends_on:
       - kafka
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:8081'
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
 ```
 
 
@@ -856,8 +856,8 @@ services:
       KSQL_BOOTSTRAP_SERVERS: kafka:39092
       KSQL_LISTENERS: http://ksql-server:8088
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor
 ```
 
 #### KSQL Client
@@ -900,11 +900,11 @@ services:
       - kafka
       - ksql-server
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:39092'
-      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CONTROL_CENTER_KSQL_URL: "http://ksql-server:8088"
-      CONTROL_CENTER_KSQL_ADVERTISED_URL: "http://localhost:8088"
-      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:39092
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONTROL_CENTER_KSQL_URL: http://ksql-server:8088
+      CONTROL_CENTER_KSQL_ADVERTISED_URL: http://localhost:8088
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
@@ -927,8 +927,8 @@ services:
     logging:
       driver: none
     ports:
-      - "8222:8222"
-      - "4222:4222"
+      - '8222:8222'
+      - '4222:4222'
     hostname: nats-server
 ```
 
@@ -966,7 +966,7 @@ services:
 #   logging:
 #     driver: none
     ports:
-      - "9011:9000"
+      - '9011:9000'
     volumes:
       - /data1
       - /data2
@@ -975,7 +975,7 @@ services:
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...2}/data{1...2}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 30s
       timeout: 20s
       retries: 3
@@ -986,7 +986,7 @@ services:
 #   logging:
 #     driver: none
     ports:
-      - "9012:9000"
+      - '9012:9000'
     volumes:
       - /data1
       - /data2
@@ -995,7 +995,7 @@ services:
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...2}/data{1...2}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 30s
       timeout: 20s
       retries: 3
@@ -1039,8 +1039,8 @@ services:
     ports:
       - '10001:80'
     environment:
-      PACT_BROKER_BASIC_AUTH_USERNAME: 'root'
-      PACT_BROKER_BASIC_AUTH_PASSWORD: '1234'
+      PACT_BROKER_BASIC_AUTH_USERNAME: root
+      PACT_BROKER_BASIC_AUTH_PASSWORD: 1234
       PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME: 'true'
       PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD: 'true'
       PACT_BROKER_DATABASE_HOST: db
