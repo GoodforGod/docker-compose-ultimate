@@ -573,7 +573,7 @@ services:
       REDASH_REDIS_URL: redis://redis:6379/0
       REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
       REDASH_LOG_LEVEL: INFO
-      REDASH_RATELIMIT_ENABLED: 'false
+      REDASH_RATELIMIT_ENABLED: 'false'
 
 
   redash-server:
@@ -824,7 +824,7 @@ services:
     depends_on:
       - kafka
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
 ```
