@@ -72,8 +72,9 @@ All services have specified dependencies and configured to use each other.
     - [SonarQube](#SonarQube)
     - [LiquiBase](#LiquiBase)
     - [Apache Atlas](#Apache-Atlas)
-    
-    
+    - [GraphQL Apollo Federation](#GraphQL-Apollo-Federation)
+
+
 ## Databases
 
 ### RDBMS
@@ -1110,4 +1111,27 @@ services:
       - '21000:21000'
     depends_on:
       - kafka
+```
+
+### GraphQL Apollo Federation
+
+For more info - [check here](https://www.apollographql.com/docs/federation/) and [here](https://www.javatpoint.com/graphql-apollo-server-installation).
+
+```dockerfile
+version: '2.3'
+services:
+  apollo-federation:
+    image: xmorse/apollo-federation-gateway
+    restart: unless-stopped
+    logging:
+      driver: none
+    ports:
+      - '8000:80'
+    environment:
+      CACHE_MAX_AGE: '5' # default cache
+      ENGINE_API_KEY: '...' # to connect to the apollo engine
+      POLL_INTERVAL: 30 # to update services changes
+      URL_0: "http://host.docker.internal:8080/graphql"   # For local service to access or can be external link
+      URL_1: "http://host.docker.internal:8081/graphql"   # For local service to access or can be external link
+      # You can add any amount of services URL_2, URL_3, etc
 ```

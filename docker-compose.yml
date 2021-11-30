@@ -700,3 +700,20 @@ services:
       driver: none
     ports:
       - '8090:8080'
+
+
+  #############################           GraphQL Apollo Federation
+  apollo-federation:
+    image: xmorse/apollo-federation-gateway
+    restart: unless-stopped
+    logging:
+      driver: none
+    ports:
+      - '8000:80'
+    environment:
+      CACHE_MAX_AGE: '5' # default cache
+      ENGINE_API_KEY: '...' # to connect to the apollo engine
+      POLL_INTERVAL: 30 # to update services changes
+      URL_0: "http://host.docker.internal:8080/graphql"   # For local service to access or can be external link
+      URL_1: "http://host.docker.internal:8081/graphql"   # For local service to access or can be external link
+      # You can add any amount of services URL_2, URL_3, etc
