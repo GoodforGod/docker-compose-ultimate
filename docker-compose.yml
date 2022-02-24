@@ -3,50 +3,66 @@ services:
 
   ##################################            CONFLUENT | KAFKA | ZOOKEEPER
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: confluentinc/cp-zookeeper:6.1.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     environment:
+      ZOOKEPEER_LOG4J_ROOT_LOGLEVEL: WARN
+      ZOOKEPEER_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: WARN
-      ZOOKEEPER_TOOLS_LOG4J_LOGLEVEL: ERROR
+    healthcheck:
+      test: nc -z localhost 2181 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
 
   kafka:
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:6.1.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9092:9092'
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
-      KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
-      KAFKA_LOG4J_LOGGERS: org.apache.zookeeper=WARN, org.apache.kafka=WARN, kafka=WARN, kafka.cluster=WARN, kafka.controller=WARN, kafka.coordinator=WARN, kafka.log=WARN, kafka.server=WARN, kafka.zookeeper=WARN, state.change.logger=WARN
+      KAFKA_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       # Option advertised.listeners {name://host:port} used so someone can access kafka outside of container\cluster.
       # 'kafka:29092' used by clickhouse-server inside docker-compose network, when 'localhost:9092' is used by containers inside network.
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: nc -z localhost 9092 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
 
   kafka-rest:
-    image: confluentinc/cp-kafka-rest
+    image: confluentinc/cp-kafka-rest:6.1.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8083:8083'
     depends_on:
+      - zookeeper
       - schema-registry
     environment:
+      KAFKA_REST_ROOT_LOGLEVEL: WARN
+      KAFKA_REST_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      KAFKA_REST_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_REST_LISTENERS: http://kafka-rest:8083
       KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
@@ -54,13 +70,14 @@ services:
 
 
   kafka-topics:
-    image: landoop/kafka-topics-ui
+    image: landoop/kafka-topics-ui:0.9.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '8001:8000'
+      - '8000:8000'
     depends_on:
+      - kafka
       - kafka-rest
       - schema-registry
     environment:
@@ -69,17 +86,19 @@ services:
 
 
   ksql-server:
-    image: confluentinc/cp-ksql-server
+    image: confluentinc/cp-ksql-server:5.4.6
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8088:8088'
     depends_on:
       - kafka
       - schema-registry
     environment:
-      KSQL_BOOTSTRAP_SERVERS: kafka:39092
+      KSQL_LOG4J_ROOT_LOGLEVEL: WARN
+      KSQL_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      KSQL_BOOTSTRAP_SERVERS: kafka:29092
       KSQL_LISTENERS: http://ksql-server:8088
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
@@ -87,10 +106,10 @@ services:
 
 
   ksql-cli:
-    image: confluentinc/cp-ksql-cli
+    image: confluentinc/cp-ksql-cli:5.4.6
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     depends_on:
       - ksql-server
     entrypoint: /bin/sh
@@ -98,25 +117,36 @@ services:
 
 
   schema-registry:
-    image: confluentinc/cp-schema-registry
+    image: confluentinc/cp-schema-registry:6.1.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9081:8081'
+      - '8081:8081'
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
     environment:
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
+      SCHEMA_REGISTRY_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+    healthcheck:
+      test: nc -z localhost 8081 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
 
   control-center:
-    image: confluentinc/cp-enterprise-control-center
+    image: confluentinc/cp-enterprise-control-center:6.1.4
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9021:9021'
     depends_on:
@@ -124,10 +154,12 @@ services:
       - schema-registry
       - ksql-server
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:39092
+      CONTROL_CENTER_ROOT_LOGLEVEL: WARN
+      CONTROL_CENTER_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:29092
       CONTROL_CENTER_ZOOKEEPER_CONNECT: zookeeper:2181
       CONTROL_CENTER_KSQL_URL: http://ksql-server:8088
-      CONTROL_CENTER_KSQL_ADVERTISED_URL: http://localhost:8088
+      CONTROL_CENTER_KSQL_ADVERTISED_URL: http://ksql-server:8088
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
@@ -137,9 +169,9 @@ services:
 
   #################################### NATS
   nats:
-    image: nats
-    logging:
-      driver: none
+    image: nats:2.7.2-alpine3.15
+#    logging:
+#      driver: none
     ports:
       - '8222:8222'
       - '4222:4222'
@@ -147,12 +179,12 @@ services:
 
   ############################             MINIO (S3)
   minio1:
-    image: minio/minio
+    image: minio/minio:RELEASE.2022-02-12T00-51-25Z
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9011:9000'
+      - '9001:9000'
     volumes:
       - /data1
       - /data2
@@ -167,12 +199,12 @@ services:
       retries: 3
 
   minio2:
-    image: minio/minio
+    image: minio/minio:RELEASE.2022-02-12T00-51-25Z
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9012:9000'
+      - '9002:9000'
     volumes:
       - /data1
       - /data2
@@ -191,8 +223,8 @@ services:
   oracle:
     image: store/oracle/database-enterprise:12.2.0.1
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '1521:1521'
       - '5500:5500'
@@ -200,10 +232,10 @@ services:
 
   ################################           POSTGRES
   postgres:
-    image: postgres
+    image: postgres:14-alpine3.15
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '5432:5432'
     environment:
@@ -213,62 +245,43 @@ services:
 
 
   pgadmin4:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:6.5
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8010:80'
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: bob@gmail.com
+      PGADMIN_DEFAULT_EMAIL: ma@il.com
       PGADMIN_DEFAULT_PASSWORD: postgres
 
 
   #################################         COCKROACH
   cockroach:
-    image: cockroachdb/cockroach
+    image: cockroachdb/cockroach:v21.2.6
     restart: unless-stopped
-    logging:
-      driver: none
-    command: start --insecure
+#    logging:
+#      driver: none
+    command: start-single-node --insecure
     ports:
       - '26257:26257'
-      - '10000:8080'
-
-
-  #############################             LiquiBase
-  liquibase:
-    image: kilna/liquibase-postgres
-    restart: unless-stopped
-    logging:
-      driver: none
-    ports:
-      - '32770:5432'
-    depends_on:
-      - postgres
-    environment:
-      LIQUIBASE_HOST: postgres
-      LIQUIBASE_PORT: 5432
-      LIQUIBASE_DATABASE: postgres
-      LIQUIBASE_USERNAME: postgres
-      LIQUIBASE_PASSWORD: postgres
+      - '8082:8080'
 
 
   ################################            ARANGO
   arangodb:
-    image: arangodb
+    image: arangodb:3.7.11
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '8529:8529'
+      - '8528:8529'
     environment:
       ARANGO_NO_AUTH: 1
 
   ################################            ARANGO CLUSTER
-
   arangodb-agent1:
     image: arangodb/arangodb:3.7.11
     environment:
@@ -413,10 +426,10 @@ services:
 
   ###############################           MONGO
   mongo:
-    image: mongo
+    image: mongo:5.0.6
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '27017:27017'
     environment:
@@ -427,22 +440,22 @@ services:
 
   #################################         REDIS
   redis:
-    image: redis
+    image: redis:6.2.6
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '6379:6379'
-    command: redis-server --requirepass test
+    command: redis-server
 
 
   redis-commander:
     image: rediscommander/redis-commander
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '6380:8081'
+      - '8084:8081'
     environment:
       REDIS_HOSTS: local:redis:6379:0:test
 
@@ -450,123 +463,126 @@ services:
   ##################################      ClickHouse
   # To connect to kafka use - kafka:29092
   clickhouse-server:
-    image: yandex/clickhouse-server
+    image: yandex/clickhouse-server:21.3.20.1
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '8123:8123'
       - '9000:9000'
       - '9009:9009'
     volumes:
       - ./clickhouse/config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse/users.xml:/etc/clickhouse-server/users.xml
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider localhost:8123/ping || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
 
-  clickhouse-client:
-    image: yandex/clickhouse-client
-    restart: unless-stopped
-    logging:
-      driver: none
-    depends_on:
-      - clickhouse-server
-    command: [ '--host', 'clickhouse-server' ]
-
-
-  clickhouse-jdbc-bridge:
-    image: riftbit/clickhouse-jdbc-bridge-service
-    restart: unless-stopped
-    logging:
-      driver: none
-    ports:
-      - '9019:9019'
-    depends_on:
-      - clickhouse-server
-    volumes:
-      - ./clickhouse/datasources.properties:/etc/clickhouse-jdbc-bridge/datasources.properties
+# Useless to use inside docker-compose, use as outter container
+#  clickhouse-client:
+#    image: yandex/clickhouse-client:21.3.20.1
+##    logging:
+##      driver: none
+#    depends_on:
+#      clickhouse-server:
+#        condition: service_healthy
+#    command: [ '--host', 'clickhouse-server', '--query', 'select * from system.functions order by name limit 4' ]
 
 
   #################################         REDASH
   redash-createdb:
-    image: redash/redash
-    logging:
-      driver: none
+    image: redash/redash:10.1.0.b50633
+#    logging:
+#      driver: none
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
     command: create_db
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      REDASH_LOG_LEVEL: INFO
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-server:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '5000:5000'
       - '5678:5678'
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_server
+    command: server
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      REDASH_LOG_LEVEL: INFO
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-scheduler:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_scheduler
+    command: scheduler
     environment:
-      REDASH_REDIS_URL: redis://redis:6379/0
+      PYTHONUNBUFFERED: 0
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-worker:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_worker
+    command: worker
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      REDASH_RATELIMIT_ENABLED: 'false'
       REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   #################################         INFINISPAN
   # INFO - https://github.com/infinispan/infinispan-images
 
   infinispan:
-    image: infinispan/server
+    image: infinispan/server:14.0
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '11222:11222'
     environment:
@@ -574,12 +590,12 @@ services:
       PASS: admin
 
 
-  #################################         INFINISPAN
+  #################################         HAZELCAST
   hazelcast:
-    image: hazelcast/hazelcast
+    image: hazelcast/hazelcast:4.0.6
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '5701:5701'
     environment:
@@ -590,8 +606,8 @@ services:
   elastic:
     image: elasticsearch:7.6.1
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9200:9200'
       - '9300:9300'
@@ -601,20 +617,20 @@ services:
 
   ###############################          SONARQUBE
   sonarqube:
-    image: sonarqube
+    image: sonarqube:8.9.7-community
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '9090:9000'
+      - '9003:9000'
 
 
   #############################             JAEGER
   jaeger:
     image: jaegertracing/all-in-one
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '6831:6831/udp'
       - '16686:16686'
@@ -624,8 +640,8 @@ services:
   atlas-server:
     image: wbaa/rokku-dev-apache-atlas
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '21000:21000'
     depends_on:
@@ -634,10 +650,10 @@ services:
 
   #############################             CASSANDRA
   cassandra:
-    image: cassandra
+    image: cassandra:4.0.3
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - '9160:9160'     # Thrift client API
       - '9042:9042'     # CQL native transport port
@@ -647,39 +663,18 @@ services:
     environment:
       CASSANDRA_START_RPC: 'true'
 
-  #############################             JANUS GRAPH
-  janusgraph:
-    image: janusgraph/janusgraph
-    restart: unless-stopped
-    logging:
-      driver: none
-    #    volumes:
-    #      - ./janusgraph:/opt/janusgraph/conf
-    #      - ./janusgraph:/etc/opt/janusgraph
-    ports:
-      - '8182:8182'
-    depends_on:
-      - elastic
-      - cassandra
-    entrypoint:
-      - /bin/bash
-      - ./bin/gremlin-server.sh
-      - /opt/janusgraph/conf/gremlin-server/gremlin-server-configuration.yaml
-    #command: ['./bin/gremlin-server.sh', '/etc/opt/janusgraph/gremlin-server.yaml']
-
-
   #############################             PACT BROKER
   pact-broker:
-    image: dius/pact-broker
+    image: dius/pact-broker:2.93.4.0
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     links:
       - postgres
     depends_on:
       - postgres
     ports:
-      - '10001:80'
+      - '8011:80'
     environment:
       PACT_BROKER_BASIC_AUTH_USERNAME: root
       PACT_BROKER_BASIC_AUTH_PASSWORD: 1234
@@ -694,22 +689,22 @@ services:
 
   #############################           Apache Nifi
   nifi:
-    image: apache/nifi
+    image: apache/nifi:1.15.3
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '8090:8080'
+      - '8085:8080'
 
 
   #############################           GraphQL Apollo Federation
   apollo-federation:
     image: xmorse/apollo-federation-gateway
     restart: unless-stopped
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
-      - '8000:80'
+      - '8012:80'
     environment:
       CACHE_MAX_AGE: '5' # default cache
       ENGINE_API_KEY: '...' # to connect to the apollo engine

@@ -31,7 +31,6 @@ All services have specified dependencies and configured to use each other.
     - [Cassandra](#Cassandra)
     - [ClickHouse:](#ClickHouse)
         - [CLI](#ClickHouse-CLI)
-        - [JDBC-Bridge](#ClickHouse-JDBC-Bridge)
         - [Redash](#Redash)
 
 
@@ -70,7 +69,6 @@ All services have specified dependencies and configured to use each other.
     - [Jaeger](#Jaeger)
     - [PACT Broker](#PACT-Broker)
     - [SonarQube](#SonarQube)
-    - [LiquiBase](#LiquiBase)
     - [Apache Atlas](#Apache-Atlas)
     - [GraphQL Apollo Federation](#GraphQL-Apollo-Federation)
 
@@ -90,10 +88,8 @@ For more info - [check here](https://hub.docker.com/_/postgres/).
 version: '2.3'
 services:
   postgres:
-    image: postgres
+    image: postgres:14-alpine3.15
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '5432:5432'
     environment:
@@ -109,19 +105,15 @@ For more info - [check here](https://hub.docker.com/r/dpage/pgadmin4).
 Depends on [Postgres](#Postgres).
 
 ```dockerfile
-version: '2.3'
-services:
   pgadmin4:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:6.5
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '8010:80'
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: bob@gmail.com
+      PGADMIN_DEFAULT_EMAIL: ma@il.com
       PGADMIN_DEFAULT_PASSWORD: postgres
 ```
 
@@ -135,8 +127,6 @@ services:
   oracle:
     image: store/oracle/database-enterprise:12.2.0.1
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '1521:1521'
       - '5500:5500'
@@ -150,14 +140,12 @@ For more info - [check here](https://hub.docker.com/r/cockroachdb/cockroach).
 version: '2.3'
 services:
   cockroach:
-    image: cockroachdb/cockroach
+    image: cockroachdb/cockroach:v21.2.6
     restart: unless-stopped
-#    logging:
-#      driver: none
-    command: start --insecure
+    command: start-single-node --insecure
     ports:
       - '26257:26257'
-      - '10000:8080'
+      - '8082:8080'
 ```
 
 ### Document Oriented
@@ -173,10 +161,8 @@ For more info - [check here](https://hub.docker.com/_/mongo).
 version: '2.3'
 services:
   mongo:
-    image: mongo
+    image: mongo:5.0.6
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '27017:27017'
     environment:
@@ -193,10 +179,7 @@ For more info - [check here](https://hub.docker.com/_/arangodb).
 version: '2.3'
 services:
   arangodb:
-    image: arangodb
-    restart: unless-stopped
-#    logging:
-#      driver: none
+    image: arangodb::3.7.11
     restart: unless-stopped
     ports:
       - '8529:8529'
@@ -214,8 +197,6 @@ services:
   arangodb-agent1:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication false
@@ -230,8 +211,6 @@ services:
   arangodb-agent2:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication false
@@ -248,8 +227,6 @@ services:
   arangodb-agent3:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication false
@@ -266,8 +243,6 @@ services:
   arangodb-coordinator1:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -287,8 +262,6 @@ services:
   arangodb-coordinator2:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -306,8 +279,6 @@ services:
   arangodb-coordinator3:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -325,8 +296,6 @@ services:
   arangodb-db1:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -344,8 +313,6 @@ services:
   arangodb-db2:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -363,8 +330,6 @@ services:
   arangodb-db3:
     image: arangodb/arangodb:3.7.11
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
       ARANGO_NO_AUTH: 1
     command: 'arangod --server.authentication=false
@@ -393,13 +358,11 @@ For more info - [check here](https://hub.docker.com/_/redis).
 version: '2.3'
 services:
   redis:
-    image: redis
+    image: redis:6.2.6
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '6379:6379'
-    command: redis-server --requirepass test
+    command: redis-server
 ```
 
 ##### Redis CLI
@@ -414,12 +377,10 @@ services:
   redis-commander:
     image: rediscommander/redis-commander
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '6380:8081'
     environment:
-      REDIS_HOSTS: local:redis:6379:0:test
+      REDIS_HOSTS: local:redis:6379:0
 ```
 
 #### Infinispan
@@ -430,7 +391,7 @@ For more info - [check here](https://hub.docker.com/r/infinispan/server).
 version: '2.3'
 services:
   infinispan:
-    image: infinispan/server
+    image: infinispan/server:14.0
     restart: unless-stopped
 #    logging:
 #      driver: none
@@ -449,7 +410,7 @@ For more info - [check here](https://hub.docker.com/r/hazelcast/hazelcast).
 version: '2.3'
 services:
   hazelcast:
-    image: hazelcast/hazelcast
+    image: hazelcast/hazelcast:4.0.6
     restart: unless-stopped
 #    logging:
 #      driver: none
@@ -472,7 +433,7 @@ For more info - [check here](https://hub.docker.com/_/cassandra).
 version: '2.3'
 services:
   cassandra:
-    image: cassandra
+    image: cassandra:4.0.3
     restart: unless-stopped
 #    logging:
 #      driver: none
@@ -494,16 +455,21 @@ For more info - [check here](https://hub.docker.com/r/yandex/clickhouse-server).
 version: '2.3'
 services:
   clickhouse-server:
-    image: yandex/clickhouse-server
+    image: yandex/clickhouse-server:21.3.20.1
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '8123:8123'
       - '9000:9000'
       - '9009:9009'
     volumes:
       - ./clickhouse/config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse/users.xml:/etc/clickhouse-server/users.xml
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider localhost:8123/ping || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 ```
 
 ##### ClickHouse CLI
@@ -516,35 +482,11 @@ Depends on [ClickHouse Server](#ClickHouse).
 version: '2.3'
 services:
   clickhouse-client:
-    image: yandex/clickhouse-client
-    restart: unless-stopped
-#    logging:
-#      driver: none
+    image: yandex/clickhouse-client:21.3.20.1
     depends_on:
-      - clickhouse-server
-    command: ['--host', 'clickhouse-server']
-```
-
-##### ClickHouse JDBC Bridge
-
-For more info - [check here](https://hub.docker.com/r/riftbit/clickhouse-jdbc-bridge-service) and [here](https://github.com/ClickHouse/clickhouse-jdbc-bridge).
-
-Depends on [ClickHouse Server](#ClickHouse).
-
-```dockerfile
-version: '2.3'
-services:
-  clickhouse-jdbc-bridge:
-    image: riftbit/clickhouse-jdbc-bridge-service
-    restart: unless-stopped
-#    logging:
-#      driver: none
-    ports:
-      - '9019:9019'
-    depends_on:
-      - clickhouse-server
-    volumes:
-      - ./clickhouse/datasources.properties:/etc/clickhouse-jdbc-bridge/datasources.properties
+      clickhouse-server:
+        condition: service_healthy
+    command: [ '--host', 'clickhouse-server', '--query', 'select * from system.functions order by name limit 4' ]
 ```
 
 ##### Redash
@@ -561,76 +503,76 @@ Depends on [ClickHouse Server](#ClickHouse).
 version: '2.3'
 services:
   redash-createdb:
-    image: redash/redash
-#    logging:
-#      driver: none
+    image: redash/redash:10.1.0.b50633
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
     command: create_db
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      REDASH_LOG_LEVEL: INFO
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-server:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
     ports:
       - '5000:5000'
       - '5678:5678'
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_server
+    command: server
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      REDASH_LOG_LEVEL: INFO
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-scheduler:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_scheduler
+    command: scheduler
     environment:
-      REDASH_REDIS_URL: redis://redis:6379/0
+      PYTHONUNBUFFERED: 0
       REDASH_RATELIMIT_ENABLED: 'false'
+      REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 
 
   redash-worker:
-    image: redash/redash
+    image: redash/redash:10.1.0.b50633
     restart: unless-stopped
-    logging:
-      driver: none
     depends_on:
-      - clickhouse-server
       - redis
       - postgres
       - redash-createdb
-    command: dev_worker
+    command: worker
     environment:
       PYTHONUNBUFFERED: 0
-      REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      REDASH_RATELIMIT_ENABLED: 'false'
       REDASH_LOG_LEVEL: INFO
+      REDASH_COOKIE_SECRET: secret
+      REDASH_SECRET_KEY: secret
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
 ```
 
 ### Graph Databases
@@ -640,33 +582,6 @@ The graph database model is an alternative to the relational model.
 In a relational database, data is stored in tables using a rigid structure with a predefined schema.
 In a graph database, there is no predefined schema as such. Rather, any schema is simply a reflection 
 of the data that has been entered. As more varied data is entered, the schema grows accordingly.
-
-#### JanusGraph
-
-Depends on [Cassandra](#Cassandra) and [Elastic Search](#ElasticSearch).
-
-For more info - [check here](https://hub.docker.com/r/janusgraph/janusgraph).
-
-```dockerfile
-version: '2.3'
-services:
-  janusgraph:
-    image: janusgraph/janusgraph
-    restart: unless-stopped
-#    logging:
-#      driver: none
-    volumes:
-      - ./janusgraph:/opt/janusgraph/conf
-    ports:
-      - '8182:8182'
-    depends_on:
-      - elastic
-      - cassandra
-    entrypoint:
-      - /bin/bash
-      - ./bin/gremlin-server.sh
-      - /opt/janusgraph/conf/gremlin-server/gremlin-server-configuration.yaml
-```
 
 #### ArangoDB Graph
 
@@ -687,10 +602,8 @@ For more info - [check here](https://hub.docker.com/_/elasticsearch).
 version: '2.3'
 services:
   elastic:
-    image: elasticsearch
+    image: elasticsearch:7.6.1
     restart: unless-stopped
-#    logging:
-#      driver: none
      ports:
        - 9200:9200
        - 9300:9300
@@ -719,16 +632,17 @@ Depends on [Zookeeper](#Zookeeper).
 version: '2.3'
 services:
   kafka:
-    image: confluentinc/cp-kafka
-    restart: unless-stopped
-#    logging:
-#      driver: none
+    image: confluentinc/cp-kafka:6.1.4
+    restart: 
     ports:
       - '9092:9092'
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       # Option advertised.listeners {name://host:port} used so someone can access kafka outside of container\cluster.
       # 'kafka:29092' used by clickhouse-server inside docker-compose network, when 'localhost:9092' is used by containers inside network.
@@ -736,6 +650,12 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: nc -z localhost 9092 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 ```
 
 ### Zookeeper
@@ -746,13 +666,19 @@ For more info - [check here](https://hub.docker.com/r/confluentinc/cp-zookeeper)
 version: '2.3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: confluentinc/cp-zookeeper:6.1.4
     restart: unless-stopped
-#    logging:
-#      driver: none
     environment:
+      ZOOKEPEER_LOG4J_ROOT_LOGLEVEL: WARN
+      ZOOKEPEER_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: nc -z localhost 2181 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 ```
 
 ### Kafka Topics
@@ -765,12 +691,10 @@ Depends on [Kafka](#Kafka) and [Kafka REST](#Kafka REST) and [Schema Registry](#
 version: '2.3'
 services:
   kafka-topics:
-    image: landoop/kafka-topics-ui
+    image: landoop/kafka-topics-ui:0.9.4
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
-      - '8001:8000'
+      - '8000:8000'
     depends_on:
       - kafka
       - kafka-rest
@@ -790,16 +714,17 @@ Depends on [Kafka](#Kafka) and [Schema Registry](#Schema Registry).
 version: '2.3'
 services:
   kafka-rest:
-    image: confluentinc/cp-kafka-rest
+    image: confluentinc/cp-kafka-rest:6.1.4
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '8083:8083'
     depends_on:
-      - kafka
+      - zookeeper
       - schema-registry
     environment:
+      KAFKA_REST_ROOT_LOGLEVEL: WARN
+      KAFKA_REST_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      KAFKA_REST_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_REST_LISTENERS: http://kafka-rest:8083
       KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
@@ -816,18 +741,27 @@ Depends on [Kafka](#Kafka).
 version: '2.3'
 services:
   schema-registry:
-    image: confluentinc/cp-schema-registry
+    image: confluentinc/cp-schema-registry:6.1.4
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
-      - '9081:8081'
+      - '8081:8081'
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
+      SCHEMA_REGISTRY_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+    healthcheck:
+      test: nc -z localhost 8081 || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 ```
 
 
@@ -844,17 +778,17 @@ Depends on [Kafka](#Kafka) and [Schema Registry](#Schema Registry).
 version: '2.3'
 services:
   ksql-server:
-    image: confluentinc/cp-ksql-server
+    image: confluentinc/cp-ksql-server:5.4.6
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '8088:8088'
     depends_on:
       - kafka
       - schema-registry
     environment:
-      KSQL_BOOTSTRAP_SERVERS: kafka:39092
+      KSQL_LOG4J_ROOT_LOGLEVEL: WARN
+      KSQL_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      KSQL_BOOTSTRAP_SERVERS: kafka:29092
       KSQL_LISTENERS: http://ksql-server:8088
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
@@ -871,10 +805,8 @@ Depends on [KSQL Server](#KSQL).
 version: '2.3'
 services:
   ksql-cli:
-    image: confluentinc/cp-ksql-cli
+    image: confluentinc/cp-ksql-cli:5.4.6
     restart: unless-stopped
-#    logging:
-#      driver: none
     depends_on:
       - ksql-server
     entrypoint: /bin/sh
@@ -891,20 +823,21 @@ Depends on [Kafka](#Kafka) and [KSQL Server](#KSQL).
 version: '2.3'
 services:
   control-center:
-    image: confluentinc/cp-enterprise-control-center
+    image: confluentinc/cp-enterprise-control-center:6.1.4
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '9021:9021'
     depends_on:
       - kafka
+      - schema-registry
       - ksql-server
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:39092
+      CONTROL_CENTER_ROOT_LOGLEVEL: WARN
+      CONTROL_CENTER_LOG4J_TOOLS_ROOT_LOGLEVEL: WARN
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:29092
       CONTROL_CENTER_ZOOKEEPER_CONNECT: zookeeper:2181
       CONTROL_CENTER_KSQL_URL: http://ksql-server:8088
-      CONTROL_CENTER_KSQL_ADVERTISED_URL: http://localhost:8088
+      CONTROL_CENTER_KSQL_ADVERTISED_URL: http://ksql-server:8088
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
@@ -924,9 +857,7 @@ For more info - [check here](https://docs.nats.io/nats-server/nats_docker).
 version: '2.3'
 services:
   nats:
-    image: nats
-    logging:
-      driver: none
+    image: nats:2.7.2-alpine3.15
     ports:
       - '8222:8222'
       - '4222:4222'
@@ -945,10 +876,8 @@ For more info - [check here](https://hub.docker.com/r/apache/nifi).
 version: '2.3'
 services:
   nifi:
-    image: apache/nifi
+    image: apache/nifi:1.15.3
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '8090:8080'
 ```
@@ -962,12 +891,10 @@ services:
 version: '2.3'
 services:
   minio1:
-    image: minio/minio
+    image: minio/minio:RELEASE.2022-02-12T00-51-25Z
     restart: unless-stopped
-#   logging:
-#     driver: none
     ports:
-      - '9011:9000'
+      - '9001:9000'
     volumes:
       - /data1
       - /data2
@@ -982,12 +909,10 @@ services:
       retries: 3
 
   minio2:
-    image: minio/minio
+    image: minio/minio:RELEASE.2022-02-12T00-51-25Z
     restart: unless-stopped
-#   logging:
-#     driver: none
     ports:
-      - '9012:9000'
+      - '9002:9000'
     volumes:
       - /data1
       - /data2
@@ -1012,8 +937,6 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '6831:6831/udp'
       - '16686:16686'
@@ -1029,10 +952,8 @@ Depends on [Postgres](#Postgres).
 version: '2.3'
 services:
   pact-broker:
-    image: dius/pact-broker
+    image: dius/pact-broker:2.93.4.0
     restart: unless-stopped
-#    logging:
-#      driver: none
     links:
       - postgres
     depends_on:
@@ -1059,38 +980,10 @@ For more info - [check here](https://hub.docker.com/_/sonarqube).
 version: '2.3'
 services:
   sonarqube:
-    image: sonarqube
+    image: sonarqube:8.9.7-community
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '9090:9000'
-```
-
-### LiquiBase
-
-For more info - [check here](https://hub.docker.com/r/kilna/liquibase-postgres/).
-
-Depends on [Postgres](#Postgres).
-
-```dockerfile
-version: '2.3'
-services:
-  liquibase:
-    image: kilna/liquibase-postgres
-    restart: unless-stopped
-#    logging:
-#      driver: none
-    ports:
-      - '32770:5432'
-    depends_on:
-       - postgres
-    environment:
-      LIQUIBASE_HOST: postgres
-      LIQUIBASE_PORT: 5432
-      LIQUIBASE_DATABASE: postgres
-      LIQUIBASE_USERNAME: postgres
-      LIQUIBASE_PASSWORD: postgres
 ```
 
 ### Apache Atlas
@@ -1105,12 +998,11 @@ services:
   atlas-server:
     image: wbaa/rokku-dev-apache-atlas
     restart: unless-stopped
-#    logging:
-#      driver: none
     ports:
       - '21000:21000'
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 ```
 
 ### GraphQL Apollo Federation
@@ -1123,8 +1015,6 @@ services:
   apollo-federation:
     image: xmorse/apollo-federation-gateway
     restart: unless-stopped
-    logging:
-      driver: none
     ports:
       - '8000:80'
     environment:
