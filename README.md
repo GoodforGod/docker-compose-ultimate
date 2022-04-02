@@ -1,11 +1,11 @@
-# Ultimate Docker Compose for (Kafka, Zookeeper, KSQL, Postgres, MongoDB, ArangoDB, Oracle, ClickHouse, PACT, Jaeger and more)
+# Ultimate Docker Compose for (Kafka, Zookeeper, KSQL, Postgres, Camunda, MongoDB, ArangoDB, Oracle, ClickHouse, Jaeger and more)
 
-*Docker Compose Version 2.3* for all services that I was working with or configured while developing.
+*Docker Compose Version 2.3* for all services that I was working with or configured while development.
 
-Just in case I need to *ready-to-run* them all so I can do it from one place as *Docker-Compose*.
-Or as a builder with configured docker compose dependencies.
+Just in case I need to *ready-to-run* them all, so I can do it as *Docker-Compose*.
 
-All services have specified dependencies and configured to use each other.
+This README can be used as builder, you can just copy services you need for your *docker-compose.yml*
+All services are configured to use each other as dependencies.
 
 - [RDBMS:](#RDBMS)
     - [Postgres:](#Postgres)
@@ -185,7 +185,7 @@ For more info - [check here](https://hub.docker.com/_/arangodb).
 version: '2.3'
 services:
   arangodb:
-    image: arangodb::3.7.11
+    image: arangodb:3.7.11
     restart: unless-stopped
     ports:
       - '8529:8529'
