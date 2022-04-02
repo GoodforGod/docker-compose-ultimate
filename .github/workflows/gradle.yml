@@ -1,0 +1,22 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Docker-Compose File
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Validate
+        run: docker-compose -f docker-compose.yml config
