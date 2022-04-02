@@ -64,6 +64,10 @@ All services have specified dependencies and configured to use each other.
     - [Apache Nifi](#Apache-Nifi)
 
 
+- [BPMN:](#bpmn)
+  - [Camunda](#camunda)
+
+
 - [Infrastructure:](#Infrastructure)
     - [Minio (S3)](#Minio)
     - [Jaeger](#Jaeger)
@@ -88,7 +92,7 @@ For more info - [check here](https://hub.docker.com/_/postgres/).
 version: '2.3'
 services:
   postgres:
-    image: postgres:14-alpine3.15
+    image: postgres:13-alpine3.15
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -105,6 +109,8 @@ For more info - [check here](https://hub.docker.com/r/dpage/pgadmin4).
 Depends on [Postgres](#Postgres).
 
 ```dockerfile
+version: '2.3'
+services:
   pgadmin4:
     image: dpage/pgadmin4:6.5
     restart: unless-stopped
@@ -882,6 +888,27 @@ services:
       - '8090:8080'
 ```
 
+
+## BPMN
+
+### Camunda
+
+For more info - [check here](https://github.com/camunda/docker-camunda-bpm-platform).
+
+```dockerfile
+version: '2.3'
+services:
+  camunda:
+    image: camunda/camunda-bpm-platform:7.7.0
+    restart: unless-stopped
+    ports:
+      - '8086:8080'
+    environment:
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres:5432/postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+```
 
 
 ## Infrastructure

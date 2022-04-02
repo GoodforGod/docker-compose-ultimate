@@ -232,7 +232,7 @@ services:
 
   ################################           POSTGRES
   postgres:
-    image: postgres:14-alpine3.15
+    image: postgres:13-alpine3.15
     restart: unless-stopped
 #    logging:
 #      driver: none
@@ -256,6 +256,21 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ma@il.com
       PGADMIN_DEFAULT_PASSWORD: postgres
+
+
+  #################################          CAMUNDA
+  camunda:
+    image: camunda/camunda-bpm-platform:7.7.0
+    restart: unless-stopped
+#    logging:
+#      driver: none
+    ports:
+      - '8086:8080'
+    environment:
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres:5432/postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
 
 
   #################################         COCKROACH
